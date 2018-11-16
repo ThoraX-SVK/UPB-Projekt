@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!-- Symmetric encrypt -->
+    <servlet>
+        <servlet-name>SymmetricFileEncryptionHandler</servlet-name>
+        <servlet-class>handlers.SymmetricFileEncryptionHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SymmetricFileEncryptionHandler</servlet-name>
+        <url-pattern>/encrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- Symmetric decrypt -->
+    <servlet>
+        <servlet-name>SymmetricFileDecryptionHandler</servlet-name>
+        <servlet-class>handlers.SymmetricFileDecryptionHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SymmetricFileDecryptionHandler</servlet-name>
+        <url-pattern>/decrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- Asymmetric encrypt -->
+    <servlet>
+        <servlet-name>AsymmetricFileEncryptionHandler</servlet-name>
+        <servlet-class>handlers.AsymmetricFileEncryptionHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AsymmetricFileEncryptionHandler</servlet-name>
+        <url-pattern>/asymmetricEncrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- Asymmetric decrypt -->
+    <servlet>
+        <servlet-name>AsymmetricFileDecryptionHandler</servlet-name>
+        <servlet-class>handlers.AsymmetricFileDecryptionHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AsymmetricFileDecryptionHandler</servlet-name>
+        <url-pattern>/asymmetricDecrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- Generate key pair -->
+    <servlet>
+        <servlet-name>KeyPairGenerationHandler</servlet-name>
+        <servlet-class>handlers.KeyPairGenerationHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>KeyPairGenerationHandler</servlet-name>
+        <url-pattern>/generateKeyPair</url-pattern>
+    </servlet-mapping>
+
+    <!-- Offline decrypt -->
+    <servlet>
+        <servlet-name>OfflineDecryptionDownloadHandler</servlet-name>
+        <servlet-class>handlers.OfflineDecryptionDownloadHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OfflineDecryptionDownloadHandler</servlet-name>
+        <url-pattern>/offlineDecrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- Homepage -->
+    <servlet>
+        <servlet-name>HomePageHandler</servlet-name>
+        <servlet-class>handlers.HomePageHandler</servlet-class>
+        <init-param>
+            <param-name>name</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HomePageHandler</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>templates/index.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>

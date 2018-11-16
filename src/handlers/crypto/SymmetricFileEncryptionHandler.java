@@ -1,4 +1,4 @@
-package handlers;
+package handlers.crypto;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -9,14 +9,11 @@ import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import services.encryption.EncryptionService;
 import services.encryption.interfaces.IEncryptionService;
 

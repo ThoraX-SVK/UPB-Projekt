@@ -1,8 +1,6 @@
-package handlers;
+package handlers.crypto;
 
-import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
-import org.apache.commons.io.IOUtils;
 import services.encryption.KeyGenerationServiceImpl;
 import services.encryption.interfaces.KeyGenerationService;
 
@@ -12,20 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static config.SystemFilePaths.ZIP_DIRECTORY;
-import static domain.utils.FileUtils.constructZipFileByteArray;
 
 public class KeyPairGenerationHandler extends HttpServlet {
 

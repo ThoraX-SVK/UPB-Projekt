@@ -4,10 +4,20 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <!-- Register encrypt -->
+    <servlet>
+        <servlet-name>RegistrationHandler</servlet-name>
+        <servlet-class>handlers.auth.RegistrationHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegistrationHandler</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
     <!-- Symmetric encrypt -->
     <servlet>
         <servlet-name>SymmetricFileEncryptionHandler</servlet-name>
-        <servlet-class>handlers.SymmetricFileEncryptionHandler</servlet-class>
+        <servlet-class>handlers.crypto.SymmetricFileEncryptionHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SymmetricFileEncryptionHandler</servlet-name>
@@ -17,7 +27,7 @@
     <!-- Symmetric decrypt -->
     <servlet>
         <servlet-name>SymmetricFileDecryptionHandler</servlet-name>
-        <servlet-class>handlers.SymmetricFileDecryptionHandler</servlet-class>
+        <servlet-class>handlers.crypto.SymmetricFileDecryptionHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>SymmetricFileDecryptionHandler</servlet-name>
@@ -27,7 +37,7 @@
     <!-- Asymmetric encrypt -->
     <servlet>
         <servlet-name>AsymmetricFileEncryptionHandler</servlet-name>
-        <servlet-class>handlers.AsymmetricFileEncryptionHandler</servlet-class>
+        <servlet-class>handlers.crypto.AsymmetricFileEncryptionHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AsymmetricFileEncryptionHandler</servlet-name>
@@ -37,7 +47,7 @@
     <!-- Asymmetric decrypt -->
     <servlet>
         <servlet-name>AsymmetricFileDecryptionHandler</servlet-name>
-        <servlet-class>handlers.AsymmetricFileDecryptionHandler</servlet-class>
+        <servlet-class>handlers.crypto.AsymmetricFileDecryptionHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AsymmetricFileDecryptionHandler</servlet-name>
@@ -47,7 +57,7 @@
     <!-- Generate key pair -->
     <servlet>
         <servlet-name>KeyPairGenerationHandler</servlet-name>
-        <servlet-class>handlers.KeyPairGenerationHandler</servlet-class>
+        <servlet-class>handlers.crypto.KeyPairGenerationHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>KeyPairGenerationHandler</servlet-name>
@@ -57,7 +67,7 @@
     <!-- Offline decrypt -->
     <servlet>
         <servlet-name>OfflineDecryptionDownloadHandler</servlet-name>
-        <servlet-class>handlers.OfflineDecryptionDownloadHandler</servlet-class>
+        <servlet-class>handlers.crypto.OfflineDecryptionDownloadHandler</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>OfflineDecryptionDownloadHandler</servlet-name>
@@ -67,7 +77,7 @@
     <!-- Homepage -->
     <servlet>
         <servlet-name>HomePageHandler</servlet-name>
-        <servlet-class>handlers.HomePageHandler</servlet-class>
+        <servlet-class>handlers.crypto.HomePageHandler</servlet-class>
         <init-param>
             <param-name>name</param-name>
             <param-value></param-value>

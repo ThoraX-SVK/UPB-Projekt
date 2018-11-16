@@ -1,14 +1,14 @@
-package handlers;
+package handlers.crypto;
 
-import domain.crypto.asymmetric.AsymmetricEncryptionData;
+import domain.crypto.asymmetric.AsymmetricDecryptionData;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
-import services.encryption.AsymmetricEncryptionServiceImpl;
+import services.encryption.AsymmetricDecryptionServiceImpl;
 import services.encryption.EncryptionService;
-import services.encryption.interfaces.AsymmetricEncryptionService;
+import services.encryption.interfaces.AsymmetricDecryptionService;
 import services.encryption.interfaces.IEncryptionService;
 
 import javax.servlet.ServletException;
@@ -17,39 +17,37 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static config.SystemFilePaths.UPLOAD_DIRECTORY;
 import static config.SystemFilePaths.ZIP_DIRECTORY;
 
 
-public class AsymmetricFileEncryptionHandler extends HttpServlet {
+public class AsymmetricFileDecryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final String TEMPLATE = "templates/AsymEnc.jsp";
+    private static final String TEMPLATE = "templates/AsymDec.jsp";
 
-    private AsymmetricEncryptionService asymmetricEncryptionService = new AsymmetricEncryptionServiceImpl();
+    private AsymmetricDecryptionService asymmetricDecryptionService = new AsymmetricDecryptionServiceImpl();
     private IEncryptionService encryptionService = new EncryptionService();
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         Date dateTime = new Date();
 
         if (ServletFileUpload.isMultipartContent(request)) {
 
-            AsymmetricEncryptionData encrypted;
+            AsymmetricDecryptionData decrypted;
             try {
-                encrypted = getEncryptionDataFromRequest(request);
-                writeToResponseOutputStream(response, encrypted);
+                decrypted = getDecryptionDataFromRequest(request);
+                writeToResponseOutputStream(response, decrypted);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -64,17 +62,15 @@ public class AsymmetricFileEncryptionHandler extends HttpServlet {
 
     }
 
-    private void writeToResponseOutputStream(HttpServletResponse response, AsymmetricEncryptionData encrypted) throws IOException {
-
-        response.setHeader("Content-Disposition","attachment;filename=" + "asym_encrypted.zip");
+    private void writeToResponseOutputStream(HttpServletResponse response, AsymmetricDecryptionData decrypted) throws IOException {
+        response.setHeader("Content-Disposition","attachment;filename=" + "asym_decrypted.zip");
         response.setContentType("application/octet-stream");
 
-        String pathname = ZIP_DIRECTORY + File.separator + "asym_encrypted.zip";
+        String pathname = ZIP_DIRECTORY + File.separator + "asym_decrypted.zip";
         File zipFile = new File(pathname);
 
         Map<String, byte[]> dataMap = new HashMap<>();
-        dataMap.put("encrypted_key.key", encrypted.getKey());
-        dataMap.put("encrypted.bin", encrypted.getEncryptedByteArray());
+        dataMap.put("decrypted.bin", decrypted.getDecryptedByteArray());
 
         byte[] zipFileByteArray = FileUtils.constructZipFileByteArray(zipFile, dataMap);
 
@@ -89,32 +85,32 @@ public class AsymmetricFileEncryptionHandler extends HttpServlet {
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }
 
-
-    private AsymmetricEncryptionData getEncryptionDataFromRequest(HttpServletRequest request) throws Exception {
+    private AsymmetricDecryptionData getDecryptionDataFromRequest(HttpServletRequest request) throws Exception {
         List<File> files;
         files = MultiPartUtils.getFilesFromMultiParts(request, UPLOAD_DIRECTORY);
 
-        File pubKey = files.get(0);
-        File content = files.get(1);
+        File prKey = files.get(0);
+        File key = files.get(1);
+        File content = files.get(2);
 
-        byte[] pubKeyBytes = FileUtils.fileToByteArray(pubKey);
+        byte[] prKeyBytes = FileUtils.fileToByteArray(prKey);
+        byte[] keyBytes = FileUtils.fileToByteArray(key);
         byte[] contentBytes = FileUtils.fileToByteArray(content);
 
-        PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pubKeyBytes));
-        EncryptionData encryptedData = encryptionService.encryptByteArray(contentBytes);
-        byte[] encryptedKey = asymmetricEncryptionService.encrypt(encryptedData.getKey().getBytes(), publicKey);
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(prKeyBytes));
+        byte[] decryptedKey = asymmetricDecryptionService.decrypt(keyBytes, privateKey);
+        byte[] decryptedData = encryptionService.decryptData(EncryptionData.fromStreamAndKey(contentBytes, new String(decryptedKey)));
 
         try {
-            return AsymmetricEncryptionData.fromStreamAndKeys(
-                    encryptedData.getEncryptedByteArray(),
-                    encryptedKey,
-                    publicKey);
+            return AsymmetricDecryptionData.fromStreamAndKey(decryptedData, privateKey);
         } catch (Exception e) {
             throw e;
         } finally {
-            pubKey.delete();
+            prKey.delete();
+            key.delete();
             content.delete();
         }
     }
+
 
 }

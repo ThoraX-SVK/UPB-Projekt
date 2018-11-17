@@ -9,7 +9,7 @@ public class RegistrationService implements IRegistrationService {
     PasswordSecurity passwordSecurity = new PasswordSecurityImpl();
 
     @Override
-    public void registerUser(String username, String password) {
+    public void registerUser(String username, String password) throws Exception {
 
         try {
             String passwordAndSalt = passwordSecurity.createHashAndSaltString(password);
@@ -17,6 +17,7 @@ public class RegistrationService implements IRegistrationService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
 
     }

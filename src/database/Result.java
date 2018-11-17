@@ -3,13 +3,16 @@ package database;
 public class Result {
 
     private String username;
-    private String password;
+    private String passAndSalt;
     private String salt;
 
-    public Result(String username, String password, String salt) {
+    public Result(String username, String passAndSalt) {
         this.username = username;
-        this.password = password;
-        this.salt = salt;
+        this.passAndSalt = passAndSalt;
+    }
+
+    public static Result fromUsernameAndPassword(String username, String password) {
+        return new Result(username, password);
     }
 
     public String getUsername() {
@@ -20,12 +23,12 @@ public class Result {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPassAndSalt() {
+        return passAndSalt;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassAndSalt(String passAndSalt) {
+        this.passAndSalt = passAndSalt;
     }
 
     public String getSalt() {

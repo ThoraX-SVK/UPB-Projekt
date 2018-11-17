@@ -13,6 +13,7 @@ import java.util.Map;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
+import handlers.auth.CookieAuthorization;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import services.encryption.EncryptionService;
 import services.encryption.interfaces.IEncryptionService;
@@ -25,10 +26,16 @@ public class SymmetricFileEncryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/SymEnc.jsp";
+    private static final String LOGIN = "templates/register.jsp";
 
     private IEncryptionService encryptionService = new EncryptionService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
 
         Date dateTime = new Date();
 
@@ -76,6 +83,12 @@ public class SymmetricFileEncryptionHandler extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
+
         request.setAttribute("message", "");
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }

@@ -6,10 +6,15 @@ public class Result {
     private String password;
     private String salt;
 
-    public Result(String username, String password, String salt) {
+    public Result(String username, String password) {
         this.username = username;
         this.password = password;
-        this.salt = salt;
+    }
+
+    public static Result fromUsernameAndPassword(String username, String password) {
+        return new Result(
+                username,
+                password);
     }
 
     public String getUsername() {

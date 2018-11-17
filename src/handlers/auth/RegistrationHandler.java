@@ -19,7 +19,12 @@ public class RegistrationHandler extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        registrationService.registerUser(username, password);
+
+        try {
+            registrationService.registerUser(username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         request.setAttribute("message", "POST");
         request.getRequestDispatcher(TEMPLATE).forward(request, response);

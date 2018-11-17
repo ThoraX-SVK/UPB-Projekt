@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -47,6 +48,30 @@ public class FileUtils {
 
     public static String getJavaDirectory() {
         return System.getProperty("user.dir");
+    }
+
+
+    public static String readFile(File file) throws IOException {
+
+        StringBuilder fileContents = new StringBuilder((int)file.length());
+
+        try (Scanner scanner = new Scanner(file)) {
+            while(scanner.hasNextLine()) {
+                fileContents.append(scanner.nextLine() + System.lineSeparator());
+            }
+            return fileContents.toString();
+        }
+    }
+
+    public static void writeToFile(String content, File file) throws IOException {
+        writeToFile(content, file, false);
+    }
+
+    public static void writeToFile(String content, File file, boolean append) throws IOException {
+        FileOutputStream fooStream = new FileOutputStream(file, append);
+        byte[] myBytes = content.getBytes();
+        fooStream.write(myBytes);
+        fooStream.close();
     }
 
 }

@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RegistrationHandler extends HttpServlet {
+public class LoginHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final String TEMPLATE = "templates/register.jsp";
-    private static final String LOGIN = "templates/login.jsp";
+    private static final String TEMPLATE = "templates/login.jsp";
+    private static final String HOME = "templates/homepage.jsp";
 
     IRegistrationService registrationService = new RegistrationService();
 
@@ -22,8 +22,16 @@ public class RegistrationHandler extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            registrationService.registerUser(username, password);
-            request.getRequestDispatcher(LOGIN).forward(request, response);
+
+            //TODO: pozriet ci je heslo spravne, ak nie je vyhodit nejaku exception, aby to nesetlo cookie
+            //TODO: Teda pozriet do DB, najst usera, jeho vypocitanyHash:salt, porovnat vysledky...
+
+            request.getRequestDispatcher(HOME).forward(request, response);
+
+            String cookie = CookieAuthorization.createNewCookieString();
+            request.getSession().setAttribute("loginCookie", cookie);
+            request.getSession().setAttribute("username", username);
+            CookieAuthorization.addCookie(username, cookie);
         } catch (Exception e) {
             e.printStackTrace();
             request.getRequestDispatcher(TEMPLATE).forward(request, response);
@@ -35,4 +43,5 @@ public class RegistrationHandler extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }
+
 }

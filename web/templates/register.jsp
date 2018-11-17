@@ -21,7 +21,7 @@
 <div>
     <form action="${pageContext.request.contextPath}/register" method="post">
         <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
+        <input type="passAndSalt" name="passAndSalt" placeholder="Password">
         <input type="submit" value="Register">
     </form>
 </div>

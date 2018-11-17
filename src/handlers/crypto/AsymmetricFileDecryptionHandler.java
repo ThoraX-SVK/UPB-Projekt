@@ -4,8 +4,8 @@ import domain.crypto.asymmetric.AsymmetricDecryptionData;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
+import handlers.auth.CookieAuthorization;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import services.encryption.AsymmetricDecryptionServiceImpl;
 import services.encryption.EncryptionService;
 import services.encryption.interfaces.AsymmetricDecryptionService;
@@ -34,12 +34,19 @@ public class AsymmetricFileDecryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/AsymDec.jsp";
+    private static final String LOGIN = "templates/register.jsp";
 
     private AsymmetricDecryptionService asymmetricDecryptionService = new AsymmetricDecryptionServiceImpl();
     private IEncryptionService encryptionService = new EncryptionService();
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
+
         Date dateTime = new Date();
 
         if (ServletFileUpload.isMultipartContent(request)) {
@@ -81,6 +88,12 @@ public class AsymmetricFileDecryptionHandler extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
+
         request.setAttribute("message", "");
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }

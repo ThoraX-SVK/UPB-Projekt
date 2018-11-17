@@ -1,6 +1,7 @@
 package handlers.crypto;
 
 import domain.utils.FileUtils;
+import handlers.auth.CookieAuthorization;
 import services.encryption.KeyGenerationServiceImpl;
 import services.encryption.interfaces.KeyGenerationService;
 
@@ -23,10 +24,17 @@ public class KeyPairGenerationHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/AsymKeyPair.jsp";
+    private static final String LOGIN = "templates/register.jsp";
 
     KeyGenerationService keyGenerationService = new KeyGenerationServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
+
         try {
             KeyPair keys = keyGenerationService.generateKeys();
             writeToResponseOutputStream(response, keys);
@@ -40,6 +48,12 @@ public class KeyPairGenerationHandler extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
+
         request.setAttribute("message", "");
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }

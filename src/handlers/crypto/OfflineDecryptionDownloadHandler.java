@@ -1,6 +1,7 @@
 package handlers.crypto;
 
 import domain.utils.FileUtils;
+import handlers.auth.CookieAuthorization;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +15,14 @@ import static config.SystemFilePaths.OFFLINE_DECRYPTION;
 
 public class OfflineDecryptionDownloadHandler extends HttpServlet {
 
+    private static final String LOGIN = "templates/register.jsp";
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        if(CookieAuthorization.isNotLoggedIn(request)) {
+            request.getRequestDispatcher(LOGIN).forward(request, response);
+            return;
+        }
 
         File file = new File(OFFLINE_DECRYPTION);
         byte[] bytes = FileUtils.fileToByteArray(file);

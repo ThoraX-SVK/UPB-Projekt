@@ -51,8 +51,8 @@ public class Database {
         }
 
         if (dbContent.containsKey(username)) {
-            String password = dbContent.get(username);
-            return Result.fromUsernameAndPassword(username, password);
+            String passAndSalt = dbContent.get(username);
+            return Result.fromUsernameAndPassword(username, passAndSalt);
         } else {
             return null;
         }
@@ -64,7 +64,6 @@ public class Database {
 
         File db = new File(DATABASE_FILE);
         String content = FileUtils.readFile(db);
-        Map<String, String> dbContent = serializer.deserializeMap(content);
-        return dbContent;
+        return serializer.deserializeMap(content);
     }
 }

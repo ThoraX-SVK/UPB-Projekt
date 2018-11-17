@@ -20,8 +20,8 @@
 
 <div>
     <form action="${pageContext.request.contextPath}/register" method="post">
-        <input type="text" name="username" placeholder="Username">
-        <input type="passAndSalt" name="passAndSalt" placeholder="Password">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
         <input type="submit" value="Register">
     </form>
 </div>

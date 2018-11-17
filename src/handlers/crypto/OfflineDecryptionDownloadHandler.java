@@ -1,7 +1,7 @@
 package handlers.crypto;
 
 import domain.utils.FileUtils;
-import handlers.auth.CookieAuthorization;
+import services.auth.CookieAuthorization;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

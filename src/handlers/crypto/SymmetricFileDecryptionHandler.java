@@ -3,7 +3,7 @@ package handlers.crypto;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
-import handlers.auth.CookieAuthorization;
+import services.auth.CookieAuthorization;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import services.encryption.EncryptionService;
 import services.encryption.interfaces.IEncryptionService;

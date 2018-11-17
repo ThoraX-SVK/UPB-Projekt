@@ -3,39 +3,29 @@ package database;
 public class Result {
 
     private String username;
-    private String passAndSalt;
+    private String password;
     private String salt;
 
-    public Result(String username, String passAndSalt) {
+    public Result(String username, String password, String salt) {
         this.username = username;
-        this.passAndSalt = passAndSalt;
+        this.password = password;
+        this.salt = salt;
     }
 
-    public static Result fromUsernameAndPassword(String username, String password) {
-        return new Result(username, password);
+    public static Result fromUserData(String username, String password, String salt) {
+        return new Result(username, password, salt);
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassAndSalt() {
-        return passAndSalt;
-    }
-
-    public void setPassAndSalt(String passAndSalt) {
-        this.passAndSalt = passAndSalt;
+    public String getPassword() {
+        return password;
     }
 
     public String getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
 }

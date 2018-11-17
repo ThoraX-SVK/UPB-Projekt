@@ -1,4 +1,4 @@
-package handlers.auth;
+package services.auth;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;

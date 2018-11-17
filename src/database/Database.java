@@ -3,6 +3,7 @@ package database;
 import database.exceptions.UserAlreadyExistsException;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 import domain.utils.FileUtils;
@@ -29,7 +30,7 @@ public class Database {
     public static void add(String username, String passwordAndSalt) throws IOException, UserAlreadyExistsException {
         MapToStringSerializer mapToFileSerializer = new JsonSerializerImpl();
         createIfNotExists();
-        Map<String, String> dbContent = getContent();
+        Map<String, String> dbContent = getContent_FAKE();
 
         if (dbContent.containsKey(username))
             throw UserAlreadyExistsException.fromUsername(username);
@@ -45,14 +46,15 @@ public class Database {
 
         Map<String, String> dbContent;
         try {
-            dbContent = getContent();
+            dbContent = getContent_FAKE();
         } catch (IOException e) {
             return null;
         }
 
         if (dbContent.containsKey(username)) {
             String passAndSalt = dbContent.get(username);
-            return Result.fromUsernameAndPassword(username, passAndSalt);
+            String[] passAndSaltSplit = passAndSalt.split(":");
+            return Result.fromUserData(username, passAndSaltSplit[0], passAndSaltSplit[1]);
         } else {
             return null;
         }
@@ -64,6 +66,17 @@ public class Database {
 
         File db = new File(DATABASE_FILE);
         String content = FileUtils.readFile(db);
+
         return serializer.deserializeMap(content);
     }
+
+    private static Map<String, String> getContent_FAKE() throws IOException {
+        Map<String, String> users = new HashMap<>();
+        users.put(
+                "jozko",
+                "eouKVjwnos3sg2J9kA1/yAlOA4DHqIfHOXEOsGOCN8k=:PN90S2/58Jnf8HTJzowhtbQe5K+S3cSjAXozKKyt+d8XBD2TLWT+ZbjZAdzvezDRFc1ATQQWnmUiNuV36p6Gr8ZnRo42yaiH9cxEG3VP3zKxd53bynTdS704FYz9zWISwJmQRA=="
+        );
+        return users;
+    }
+
 }

@@ -1,6 +1,9 @@
 package handlers.auth;
 
+import services.auth.AuthenticationService;
+import services.auth.CookieAuthorization;
 import services.auth.RegistrationService;
+import services.auth.interfaces.IAuthenticationService;
 import services.auth.interfaces.IRegistrationService;
 
 import javax.servlet.ServletException;
@@ -15,29 +18,26 @@ public class LoginHandler extends HttpServlet {
     private static final String TEMPLATE = "templates/login.jsp";
     private static final String HOME = "templates/homepage.jsp";
 
-    IRegistrationService registrationService = new RegistrationService();
+    private IAuthenticationService authenticationService = new AuthenticationService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
 
         try {
+            boolean isAuthenticated = authenticationService.authenticateFromRequest(request);
 
-            //TODO: pozriet ci je heslo spravne, ak nie je vyhodit nejaku exception, aby to nesetlo cookie
-            //TODO: Teda pozriet do DB, najst usera, jeho vypocitanyHash:salt, porovnat vysledky...
+            if (isAuthenticated) {
+                request.getRequestDispatcher(HOME).forward(request, response);
+            } else {
+                request.setAttribute("message", "Incorrect credentials!");
+                request.getRequestDispatcher(TEMPLATE).forward(request, response);
+            }
 
-            request.getRequestDispatcher(HOME).forward(request, response);
-
-            String cookie = CookieAuthorization.createNewCookieString();
-            request.getSession().setAttribute("loginCookie", cookie);
-            request.getSession().setAttribute("username", username);
-            CookieAuthorization.addCookie(username, cookie);
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("message", "There has been an error!");
+            request.setAttribute("username", request.getParameter("username"));
             request.getRequestDispatcher(TEMPLATE).forward(request, response);
         }
-
-        request.setAttribute("message", "POST");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

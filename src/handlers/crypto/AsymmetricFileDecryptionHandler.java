@@ -4,7 +4,7 @@ import domain.crypto.asymmetric.AsymmetricDecryptionData;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
-import handlers.auth.CookieAuthorization;
+import services.auth.CookieAuthorization;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import services.encryption.AsymmetricDecryptionServiceImpl;
 import services.encryption.EncryptionService;

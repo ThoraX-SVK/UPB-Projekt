@@ -8,13 +8,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Login</title>
 </head>
 <body>
 
+<h2>${message}</h2>
+
 <form action="${pageContext.request.contextPath}/login" method="post">
-    <input type="text" name="username" placeholder="Username">
-    <input type="passAndSalt" name="passAndSalt" placeholder="Password">
+    <input type="text" name="username" value="${username}" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Password" required>
     <input type="submit" value="Login">
 </form>
 

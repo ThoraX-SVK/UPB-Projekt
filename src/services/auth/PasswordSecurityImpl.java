@@ -18,8 +18,9 @@ import java.util.Base64;
 public class PasswordSecurityImpl implements PasswordSecurity {
 
     private static final int ITERATIONS = 40000;
+    public static final String DEFAULT_ALGORITHM = "SHA-256";
 
-    public String createHashAndSaltString(String password) throws Exception {
+    public String createHashAndSaltString(String password) {
 
         byte[] salt = getSalt();
         String stringSalt = Base64.getEncoder().encodeToString(salt);
@@ -28,11 +29,16 @@ public class PasswordSecurityImpl implements PasswordSecurity {
         return hashedPassword + ":" + stringSalt;
     }
 
-    public String hash(String password, String salt) throws NoSuchAlgorithmException {
+    public String hash(String password, String salt) {
 
         String hash = salt + password;
-
-        MessageDigest hasher = MessageDigest.getInstance("SHA-256");
+        MessageDigest hasher;
+        try {
+            hasher = MessageDigest.getInstance(DEFAULT_ALGORITHM);
+        } catch (NoSuchAlgorithmException e) {
+            // should never happen as algorithm is not passed as parameter
+            return null;
+        }
 
         byte[] processing = hash.getBytes();
         for(int i = 0; i < ITERATIONS; i++) {

@@ -1,10 +1,9 @@
 package services.auth.interfaces;
 
-import java.security.NoSuchAlgorithmException;
 
 public interface PasswordSecurity {
 
-    String createHashAndSaltString(String password) throws Exception;
+    String createHashAndSaltString(String password);
 
-    String hash(String password, String salt) throws NoSuchAlgorithmException;
+    String hash(String password, String salt);
 }

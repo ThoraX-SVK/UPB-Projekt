@@ -1,5 +1,7 @@
 package handlers.crypto;
 
+import config.UrlPaths;
+import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
 
 import javax.servlet.ServletException;
@@ -10,22 +12,15 @@ import java.io.IOException;
 
 public class HomePageHandler extends HttpServlet {
 
-    private static final String LOGIN = "templates/register.jsp";
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
+    private static final String TEMPLATE = "/templates/homepage.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if(CookieAuthorization.isNotLoggedIn(request)) {
-            request.getRequestDispatcher(LOGIN).forward(request, response);
+        if (CookieAuthorization.isNotLoggedIn(request)) {
+            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
             return;
         }
 
-        String name = request.getParameter("name");
-        if (name == null) name = "[NO NAME]";
-        request.setAttribute("name", name);
-        request.getRequestDispatcher("/templates/homepage.jsp").forward(request, response);
+        request.getRequestDispatcher(TEMPLATE).forward(request, response);
     }
 }

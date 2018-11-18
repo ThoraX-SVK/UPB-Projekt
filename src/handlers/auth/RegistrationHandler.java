@@ -2,8 +2,9 @@ package handlers.auth;
 
 import com.fei.upb.PasswordStrength;
 import com.fei.upb.PasswordStrengthImpl;
-import config.SystemFilePaths;
+import config.UrlPaths;
 import database.exceptions.UserAlreadyExistsException;
+import domain.utils.UrlUtils;
 import services.auth.RegistrationService;
 import services.auth.interfaces.IRegistrationService;
 
@@ -17,7 +18,8 @@ public class RegistrationHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/register.jsp";
-    private static final String LOGIN = "templates/login.jsp";
+
+
 
     private IRegistrationService registrationService = new RegistrationService();
 
@@ -25,16 +27,15 @@ public class RegistrationHandler extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        // TODO: check if credentials not null & password strength
         PasswordStrength passwordStrength = new PasswordStrengthImpl(password);
         try {
-            registrationService.userExists(username);
+            registrationService.checkUsernameAvailable(username);
 
             if (!passwordStrength.isSecure()) {
                 throw new SecurityException("Password is weak");
             }
             registrationService.registerUser(username, password);
-            request.getRequestDispatcher(LOGIN).forward(request, response);
+            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
             return;
 
         } catch (UserAlreadyExistsException e) {

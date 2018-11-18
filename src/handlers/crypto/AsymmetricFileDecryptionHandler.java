@@ -1,9 +1,11 @@
 package handlers.crypto;
 
+import config.UrlPaths;
 import domain.crypto.asymmetric.AsymmetricDecryptionData;
 import domain.crypto.symmetric.EncryptionData;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
+import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import services.encryption.AsymmetricDecryptionServiceImpl;
@@ -34,7 +36,6 @@ public class AsymmetricFileDecryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/AsymDec.jsp";
-    private static final String LOGIN = "templates/register.jsp";
 
     private AsymmetricDecryptionService asymmetricDecryptionService = new AsymmetricDecryptionServiceImpl();
     private IEncryptionService encryptionService = new EncryptionService();
@@ -42,8 +43,8 @@ public class AsymmetricFileDecryptionHandler extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if(CookieAuthorization.isNotLoggedIn(request)) {
-            request.getRequestDispatcher(LOGIN).forward(request, response);
+        if (CookieAuthorization.isNotLoggedIn(request)) {
+            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
             return;
         }
 
@@ -90,7 +91,7 @@ public class AsymmetricFileDecryptionHandler extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         if(CookieAuthorization.isNotLoggedIn(request)) {
-            request.getRequestDispatcher(LOGIN).forward(request, response);
+            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
             return;
         }
 

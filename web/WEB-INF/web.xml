@@ -13,6 +13,15 @@
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>LogoutHandler</servlet-name>
+        <servlet-class>handlers.auth.LogoutHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutHandler</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
     <!-- Register encrypt -->
     <servlet>
         <servlet-name>RegistrationHandler</servlet-name>

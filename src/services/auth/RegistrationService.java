@@ -1,9 +1,11 @@
 package services.auth;
 
 import database.Database;
+import database.Result;
 import database.exceptions.UserAlreadyExistsException;
 import services.auth.interfaces.IRegistrationService;
 import services.auth.interfaces.PasswordSecurity;
+
 
 public class RegistrationService implements IRegistrationService {
 
@@ -23,5 +25,13 @@ public class RegistrationService implements IRegistrationService {
             throw e;
         }
 
+    }
+
+    @Override
+    public void userExists(String username) throws UserAlreadyExistsException {
+        Result found = Database.find(username);
+        if (found != null) {
+            throw UserAlreadyExistsException.fromUsername(username);
+        }
     }
 }

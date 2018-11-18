@@ -16,7 +16,9 @@
 
 <a href="${pageContext.request.contextPath}/home">Homepage</a> <br/>
 
-<h2>${message}</h2>
+<div style="color: darkred; font-weight: 500; font-family: Lato">
+    ${message}
+</div>
 
 <div>
     <form action="${pageContext.request.contextPath}/register" method="post">

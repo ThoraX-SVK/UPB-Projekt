@@ -28,6 +28,8 @@ public class RegistrationHandler extends HttpServlet {
         // TODO: check if credentials not null & password strength
         PasswordStrength passwordStrength = new PasswordStrengthImpl(password);
         try {
+            registrationService.userExists(username);
+
             if (!passwordStrength.isSecure()) {
                 throw new SecurityException("Password is weak");
             }

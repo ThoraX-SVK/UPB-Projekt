@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class LogoutController extends HttpServlet {
+public class LogoutHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/logout.jsp";

@@ -1,5 +1,8 @@
 package handlers.auth;
 
+import com.fei.upb.PasswordStrength;
+import com.fei.upb.PasswordStrengthImpl;
+import config.SystemFilePaths;
 import database.exceptions.UserAlreadyExistsException;
 import services.auth.RegistrationService;
 import services.auth.interfaces.IRegistrationService;
@@ -23,14 +26,20 @@ public class RegistrationHandler extends HttpServlet {
         String password = request.getParameter("password");
 
         // TODO: check if credentials not null & password strength
-
+        PasswordStrength passwordStrength = new PasswordStrengthImpl(password);
         try {
+            if (!passwordStrength.isSecure()) {
+                throw new SecurityException("Password is weak");
+            }
             registrationService.registerUser(username, password);
             request.getRequestDispatcher(LOGIN).forward(request, response);
             return;
 
         } catch (UserAlreadyExistsException e) {
             request.setAttribute("message", "User with username " + username + " already exists!");
+
+        } catch (SecurityException e) {
+            request.setAttribute("message", passwordStrength.finalReport().replace(System.lineSeparator(),"<br/>" ));
 
         } catch (Exception e) {
             e.printStackTrace();

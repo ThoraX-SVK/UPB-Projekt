@@ -30,7 +30,7 @@ public class Database {
     public static void add(String username, String passwordAndSalt) throws IOException, UserAlreadyExistsException {
         MapToStringSerializer mapToFileSerializer = new JsonSerializerImpl();
         createIfNotExists();
-        Map<String, String> dbContent = getContent_FAKE();
+        Map<String, String> dbContent = getContent();
 
         if (dbContent.containsKey(username))
             throw UserAlreadyExistsException.fromUsername(username);
@@ -46,7 +46,7 @@ public class Database {
 
         Map<String, String> dbContent;
         try {
-            dbContent = getContent_FAKE();
+            dbContent = getContent();
         } catch (IOException e) {
             return null;
         }

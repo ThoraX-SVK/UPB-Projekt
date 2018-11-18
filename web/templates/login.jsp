@@ -12,7 +12,9 @@
 </head>
 <body>
 
-<h2>${message}</h2>
+<div style="color: darkred; font-weight: 500; font-family: Lato">
+    ${message}
+</div>
 
 <form action="${pageContext.request.contextPath}/login" method="post">
     <input type="text" name="username" value="${username}" placeholder="Username" required>

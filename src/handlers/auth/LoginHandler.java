@@ -29,6 +29,7 @@ public class LoginHandler extends HttpServlet {
                 request.getRequestDispatcher(HOME).forward(request, response);
             } else {
                 request.setAttribute("message", "Incorrect credentials!");
+                request.setAttribute("username", request.getParameter("username"));
                 request.getRequestDispatcher(TEMPLATE).forward(request, response);
             }
 

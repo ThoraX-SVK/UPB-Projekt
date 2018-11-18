@@ -1,5 +1,6 @@
 package handlers.auth;
 
+import domain.utils.UrlUtils;
 import services.auth.AuthenticationService;
 import services.auth.CookieAuthorization;
 import services.auth.RegistrationService;
@@ -16,7 +17,9 @@ public class LoginHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/login.jsp";
-    private static final String HOME = "templates/homepage.jsp";
+
+    private static final String HOME_PATH = "/home";
+
 
     private IAuthenticationService authenticationService = new AuthenticationService();
 
@@ -26,7 +29,7 @@ public class LoginHandler extends HttpServlet {
             boolean isAuthenticated = authenticationService.authenticateFromRequest(request);
 
             if (isAuthenticated) {
-                request.getRequestDispatcher(HOME).forward(request, response);
+                response.sendRedirect(UrlUtils.getUrlFromRequest(request) + HOME_PATH);
             } else {
                 request.setAttribute("message", "Incorrect credentials!");
                 request.setAttribute("username", request.getParameter("username"));

@@ -28,7 +28,7 @@ public class RegistrationService implements IRegistrationService {
     }
 
     @Override
-    public void userExists(String username) throws UserAlreadyExistsException {
+    public void checkUsernameAvailable(String username) throws UserAlreadyExistsException {
         Result found = Database.find(username);
         if (found != null) {
             throw UserAlreadyExistsException.fromUsername(username);

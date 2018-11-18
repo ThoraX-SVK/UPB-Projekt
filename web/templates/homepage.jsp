@@ -15,6 +15,10 @@
 
 <h1>Homepage</h1>
 
+<div>Logged in as: ${sessionScope.username}</div>
+&nbsp;
+<a href="${pageContext.request.contextPath}/logout">Logout</a>
+
 <h2>Symmetrical cryptography: </h2>
 <a href="${pageContext.request.contextPath}/encrypt">symmetric encrypt</a> <br/>
 <a href="${pageContext.request.contextPath}/decrypt">symmetric decrypt</a> <br/>

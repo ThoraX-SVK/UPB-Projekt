@@ -14,16 +14,15 @@
 
 <h1>Register</h1>
 
-<a href="${pageContext.request.contextPath}/home">Homepage</a> <br/>
-
 <div style="color: darkred; font-weight: 500; font-family: Lato">
     ${message}
 </div>
 
 <div>
     <form action="${pageContext.request.contextPath}/register" method="post">
-        <input type="text" name="username" placeholder="Username" required>
+        <input type="text" name="username" value="${username}" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="password_confirm" placeholder="Confirm password" required>
         <input type="submit" value="Register">
     </form>
 </div>

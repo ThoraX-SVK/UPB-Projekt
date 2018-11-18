@@ -13,17 +13,17 @@ import json.interfaces.MapToStringSerializer;
 
 public class Database {
 
-    public static final String DATABASE_FILE = SystemFilePaths.DATABASE_LOCATION + File.separator + "db.json";
-
+    private static final String DATABASE_FILE = SystemFilePaths.DATABASE_LOCATION + File.separator + "db.json";
 
     private static void createIfNotExists() throws IOException {
         FileUtils.createDirectoryIfNotExists(SystemFilePaths.DATABASE_LOCATION);
         File db = new File(DATABASE_FILE);
-        try {
+
+        if (!db.exists()) {
             db.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
+            FileOutputStream fos = new FileOutputStream(db);
+            fos.write("{}".getBytes());
+            fos.close();
         }
     }
 
@@ -68,15 +68,6 @@ public class Database {
         String content = FileUtils.readFile(db);
 
         return serializer.deserializeMap(content);
-    }
-
-    private static Map<String, String> getContent_FAKE() throws IOException {
-        Map<String, String> users = new HashMap<>();
-        users.put(
-                "jozko",
-                "eouKVjwnos3sg2J9kA1/yAlOA4DHqIfHOXEOsGOCN8k=:PN90S2/58Jnf8HTJzowhtbQe5K+S3cSjAXozKKyt+d8XBD2TLWT+ZbjZAdzvezDRFc1ATQQWnmUiNuV36p6Gr8ZnRo42yaiH9cxEG3VP3zKxd53bynTdS704FYz9zWISwJmQRA=="
-        );
-        return users;
     }
 
 }

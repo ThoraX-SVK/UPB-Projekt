@@ -12,6 +12,10 @@
 </head>
 <body>
 
+<h1>Login</h1>
+
+<a href="${pageContext.request.contextPath}/register">Register an account here</a> <br/><br/>
+
 <div style="color: darkred; font-weight: 500; font-family: Lato">
     ${message}
 </div>

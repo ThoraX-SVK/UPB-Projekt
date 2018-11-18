@@ -34,8 +34,11 @@ public class RegistrationHandler extends HttpServlet {
             registrationService.checkUsernameAvailable(username);
             if (!passwordsMatch(password, passwordConfirm)) {
                 throw PasswordMismatchException.generic();
-            }
-            if (!checkPasswordSecure(password)) {
+
+            } else if (username.equals(password)) {
+                throw new SecurityException("Password cannot be identical to username!");
+
+            } else if (!checkPasswordSecure(password)) {
                 throw new SecurityException();
             }
             registrationService.registerUser(username, password);
@@ -49,7 +52,7 @@ public class RegistrationHandler extends HttpServlet {
             message = "Passwords do not match!";
 
         } catch (SecurityException e) {
-            message = report;
+            message = report != null ? report : e.getMessage();   // ugly, but then again so is everything
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -92,6 +92,26 @@
         <url-pattern>/offlineDecrypt</url-pattern>
     </servlet-mapping>
 
+    <!-- My files -->
+    <servlet>
+        <servlet-name>MyFilesHandler</servlet-name>
+        <servlet-class>handlers.files.MyFilesHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyFilesHandler</servlet-name>
+        <url-pattern>/myFiles</url-pattern>
+    </servlet-mapping>
+
+    <!-- File comments -->
+    <servlet>
+        <servlet-name>CommentsHandler</servlet-name>
+        <servlet-class>handlers.files.CommentsHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CommentsHandler</servlet-name>
+        <url-pattern>/comments</url-pattern>
+    </servlet-mapping>
+
     <!-- Homepage -->
     <servlet>
         <servlet-name>HomePageHandler</servlet-name>

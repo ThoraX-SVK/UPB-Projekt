@@ -9,7 +9,10 @@ import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.FileDataNotPersistedException;
 import services.files.interfaces.FileService;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class FileServiceImpl implements FileService {
@@ -17,26 +20,58 @@ public class FileServiceImpl implements FileService {
     private FileRepository fileRepository = new FileRepository();
     private UserFileRelationshipRepository userFileRelationshipRepository = new UserFileRelationshipRepository();
 
+
+    @Override
+    public List<String> findAllFileOwnersUsernames(String fileId) throws DatabaseNotLoadedException {
+        List<UserFileRelationship> userFileRelationships = userFileRelationshipRepository.findAll();
+        List<String> usernames = userFileRelationships.stream()
+                .filter(userFileRelationship -> userFileRelationship.isFileOwnedByUser(fileId))
+                .map(UserFileRelationship::getUsername)
+                .collect(Collectors.toList());
+        return usernames;
+    }
+
+    @Override
+    public List<String> findAllFileGuestsUsernames(String fileId) throws DatabaseNotLoadedException {
+        List<UserFileRelationship> userFileRelationships = userFileRelationshipRepository.findAll();
+        List<String> usernames = userFileRelationships.stream()
+                .filter(userFileRelationship -> userFileRelationship.isFileAccessibleByUser(fileId))
+                .map(UserFileRelationship::getUsername)
+                .collect(Collectors.toList());
+        return usernames;
+    }
+
+    @Override
     public List<FileData> findAllOwnedFilesByUsername(String username) throws DatabaseNotLoadedException {
         try {
             UserFileRelationship ufr = userFileRelationshipRepository.findByUsername(username);
-            return fileRepository.findByIds(ufr.getOwnedFiles());
+            if (ufr != null) {
+                return fileRepository.findByIds(ufr.getOwnedFiles());
+            } else {
+                return Collections.emptyList();
+            }
 
         } catch (DatabaseNotLoadedException e) {
             throw e;
         }
     }
 
+    @Override
     public List<FileData> findAllAccessibleFilesByUsername(String username) throws DatabaseNotLoadedException {
         try {
             UserFileRelationship ufr = userFileRelationshipRepository.findByUsername(username);
-            return fileRepository.findByIds(ufr.getAccessibleFiles());
+            if (ufr != null) {
+                return fileRepository.findByIds(ufr.getAccessibleFiles());
+            } else {
+                return Collections.emptyList();
+            }
 
         } catch (DatabaseNotLoadedException e) {
             throw e;
         }
     }
 
+    @Override
     public FileData findFile(String fileId) {
         FileData fileData = fileRepository.findById(fileId);
         return fileData;
@@ -76,7 +111,7 @@ public class FileServiceImpl implements FileService {
         if (userFileRelationship == null) {
             return false;
         }
-        return userFileRelationship.getOwnedFiles().contains(fileId);
+        return userFileRelationship.isFileOwnedByUser(fileId);
     }
 
     @Override
@@ -85,7 +120,7 @@ public class FileServiceImpl implements FileService {
         if (userFileRelationship == null) {
             return false;
         }
-        return userFileRelationship.getOwnedFiles().contains(fileId) || userFileRelationship.getAccessibleFiles().contains(fileId);
+        return userFileRelationship.isFileOwnedByUser(fileId) || userFileRelationship.isFileAccessibleByUser(fileId);
     }
 
 }

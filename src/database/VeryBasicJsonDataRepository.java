@@ -2,6 +2,7 @@ package database;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import database.classes.FileData;
 import database.classes.UserFileRelationship;
 import database.exceptions.DatabaseNotLoadedException;
 import domain.utils.FileUtils;
@@ -9,6 +10,7 @@ import domain.utils.FileUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public abstract class VeryBasicJsonDataRepository {

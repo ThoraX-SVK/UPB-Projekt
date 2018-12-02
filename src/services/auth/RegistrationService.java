@@ -17,7 +17,8 @@ public class RegistrationService implements IRegistrationService {
 
         try {
             String passwordAndSalt = passwordSecurity.createHashAndSaltString(password);
-            userRepository.add(username, passwordAndSalt);
+            String[] passwordAndSaltSplit = passwordAndSalt.split(":");
+            userRepository.add(username, passwordAndSaltSplit[0], passwordAndSaltSplit[1]);
 
         } catch (UserAlreadyExistsException e) {
             throw e;

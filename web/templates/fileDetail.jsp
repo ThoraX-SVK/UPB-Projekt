@@ -28,6 +28,21 @@
 <div>${file.getEncryptionKey()}</div>
 <div>${file.getEncryptionType()}</div>
 
+<div>Owners of file:</div>
+<c:forEach items="${owners}" var="element">
+    <div class="owners-wrapper">
+        &nbsp;${element}
+    </div> <br/>
+</c:forEach>
+
+<div>Guests (Viewers & commenters) of file:</div>
+<c:forEach items="${guests}" var="element">
+    <div class="owners-wrapper">
+        &nbsp;${element}
+    </div> <br/>
+</c:forEach>
+
+
 <c:forEach items="${comments}" var="element">
     <div class="comment-wrapper">
         &nbsp;

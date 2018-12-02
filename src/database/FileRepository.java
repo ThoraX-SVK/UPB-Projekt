@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
 import database.classes.EncryptionType;
 import database.classes.FileData;
+import database.classes.UserData;
 import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.FileDataNotPersistedException;
 import domain.utils.FileUtils;
@@ -59,6 +60,17 @@ public class FileRepository extends VeryBasicJsonDataRepository {
         }
 
         return result;
+    }
+
+    public List<FileData> findAll() throws DatabaseNotLoadedException {
+        Map<String, FileData> dbContent;
+        List<FileData> results = new ArrayList<>();
+        dbContent = load();
+
+        for (Map.Entry<String, FileData> fileDataEntry : dbContent.entrySet()) {
+            results.add(fileDataEntry.getValue());
+        }
+        return results;
     }
 
     private String makeFileId(String fileName) {

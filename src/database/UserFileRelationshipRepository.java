@@ -3,6 +3,7 @@ package database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
+import database.classes.FileData;
 import database.classes.UserFileRelationship;
 import database.exceptions.DatabaseNotLoadedException;
 import domain.utils.FileUtils;
@@ -10,6 +11,9 @@ import domain.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository {
@@ -28,13 +32,14 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
         save(content);
     }
 
-
     public void addOwnerToFile(String username, String fileId) throws DatabaseNotLoadedException {
         Map<String, UserFileRelationship> content = load();
 
-        if (content.containsKey(username)) {
-            UserFileRelationship ufr = content.get(username);
-            ufr.addOwnedFile(fileId);
+        UserFileRelationship userFileRelationship = content.getOrDefault(fileId, UserFileRelationship.empty(username));
+        userFileRelationship.addOwnedFile(fileId);
+
+        if (!content.containsKey(username)) {
+            content.put(username, userFileRelationship);
         }
 
         save(content);
@@ -43,9 +48,11 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
     public void addGuestToFile(String username, String fileId) throws DatabaseNotLoadedException {
         Map<String, UserFileRelationship> content = load();
 
-        if (content.containsKey(username)) {
-            UserFileRelationship ufr = content.get(username);
-            ufr.addAccessibleFile(fileId);
+        UserFileRelationship userFileRelationship = content.getOrDefault(fileId, UserFileRelationship.empty(username));
+        userFileRelationship.addAccessibleFile(fileId);
+
+        if (!content.containsKey(username)) {
+            content.put(username, userFileRelationship);
         }
 
         save(content);
@@ -57,6 +64,17 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
         return content.getOrDefault(username, null);
     }
 
+
+    public List<UserFileRelationship> findAll() throws DatabaseNotLoadedException {
+        Map<String, UserFileRelationship> dbContent;
+        List<UserFileRelationship> results = new ArrayList<>();
+        dbContent = load();
+
+        for (Map.Entry<String, UserFileRelationship> fileDataEntry : dbContent.entrySet()) {
+            results.add(fileDataEntry.getValue());
+        }
+        return results;
+    }
 
     private Type getUserFileDataMapType() {
         return new TypeToken<Map<String, UserFileRelationship>>() {}.getType();

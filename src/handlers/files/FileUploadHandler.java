@@ -21,9 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-
-import static config.SystemFilePaths.USER_FILES_UPLOAD_DIRECTORY;
-
 @MultipartConfig
 public class FileUploadHandler extends HttpServlet {
 
@@ -54,8 +51,7 @@ public class FileUploadHandler extends HttpServlet {
             return;
         }
 
-        response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
-
+        response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.MY_FILES_PATH);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

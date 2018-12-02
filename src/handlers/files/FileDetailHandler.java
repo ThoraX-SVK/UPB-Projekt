@@ -27,21 +27,8 @@ public class FileDetailHandler extends HttpServlet {
     private FileService fileService = new FileServiceImpl();
     private CommentService commentService = new CommentServiceImpl();
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        if (CookieAuthorization.isNotLoggedIn(request)) {
-            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
-            return;
-        }
-
-        String username = (String) request.getSession().getAttribute("username");
-        String fileId = UrlUtils.getUrlParts(request).get(0);
-
-        request.getRequestDispatcher(TEMPLATE).forward(request, response);
-    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = (String) request.getSession().getAttribute("username");
         String fileId = request.getParameter("fileId");
 
         if (CookieAuthorization.isNotLoggedIn(request)) {
@@ -55,10 +42,14 @@ public class FileDetailHandler extends HttpServlet {
             return;
         }
 
-        List<Comment> comments;
         try {
-            comments = commentService.findAll(fileId);
+            List<String> ownerUsernames = fileService.findAllFileOwnersUsernames(fileId);
+            List<String> guestUsernames = fileService.findAllFileGuestsUsernames(fileId);
+            List<Comment> comments = commentService.findAll(fileId);
+
             request.setAttribute("comments", comments);
+            request.setAttribute("owners", ownerUsernames);
+            request.setAttribute("guests", guestUsernames);
 
         } catch (DatabaseNotLoadedException e) {
             e.printStackTrace();

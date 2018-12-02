@@ -1,10 +1,16 @@
 package database;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import database.classes.FileData;
 import database.classes.UserData;
 import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.UserAlreadyExistsException;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import domain.utils.FileUtils;
@@ -18,20 +24,20 @@ public class UserRepository extends VeryBasicJsonDataRepository {
     private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
 
 
-    public void add(String username, String passwordAndSalt) throws DatabaseNotLoadedException, UserAlreadyExistsException, IOException {
+    public void add(String username, String password, String salt) throws DatabaseNotLoadedException, UserAlreadyExistsException, IOException {
         createIfNotExists(dataFile, dataFileLocation);
-        Map<String, String> dbContent = load();
+        Map<String, UserData> dbContent = load();
 
         if (dbContent.containsKey(username))
             throw UserAlreadyExistsException.fromUsername(username);
 
-        dbContent.put(username, passwordAndSalt);
+        UserData newUser = UserData.fromUserData(username, password, salt);
+        dbContent.put(username, newUser);
         save(dbContent);
     }
 
     public UserData find(String username) {
-
-        Map<String, String> dbContent;
+        Map<String, UserData> dbContent;
         try {
             dbContent = load();
         } catch (DatabaseNotLoadedException e) {
@@ -39,30 +45,44 @@ public class UserRepository extends VeryBasicJsonDataRepository {
         }
 
         if (dbContent.containsKey(username)) {
-            String passAndSalt = dbContent.get(username);
-            String[] passAndSaltSplit = passAndSalt.split(":");
-            return UserData.fromUserData(username, passAndSaltSplit[0], passAndSaltSplit[1]);
+            UserData userData = dbContent.get(username);
+            return UserData.fromUserData(username, userData.getPassword(), userData.getSalt());
         } else {
             return null;
         }
+    }
 
+    public List<UserData> findAll() throws DatabaseNotLoadedException {
+        Map<String, UserData> dbContent;
+        List<UserData> results = new ArrayList<>();
+        dbContent = load();
+
+        for (Map.Entry<String, UserData> userDataEntry : dbContent.entrySet()) {
+            results.add(userDataEntry.getValue());
+        }
+        return results;
+    }
+
+     private Type getFileDataMapType() {
+        return new TypeToken<Map<String, UserData>>() {}.getType();
     }
 
     @Override
     protected void save(Map dbContent) throws DatabaseNotLoadedException {
+        Gson gson = getGsonInstance();
+        String serializedJson = gson.toJson(dbContent);
+
         File db = new File(dataFile);
-        MapToStringSerializer mapToFileSerializer = new JsonSerializerImpl();
-        String fileContent = mapToFileSerializer.serializeMap(dbContent);
         try {
-            FileUtils.writeToFile(fileContent, db);
+            FileUtils.writeToFile(serializedJson, db);
         } catch (IOException e) {
             throw DatabaseNotLoadedException.generic(e);
         }
     }
 
     @Override
-    protected Map<String, String> load() throws DatabaseNotLoadedException {
-        MapToStringSerializer serializer = new JsonSerializerImpl();
+    protected Map<String, UserData> load() throws DatabaseNotLoadedException {
+       Gson gson = getGsonInstance();
 
         File db = new File(dataFile);
         String content;
@@ -71,7 +91,10 @@ public class UserRepository extends VeryBasicJsonDataRepository {
         } catch (IOException e) {
             throw DatabaseNotLoadedException.generic(e);
         }
+        Type listType = getFileDataMapType();
 
-        return serializer.deserializeMap(content);
+        Map<String, UserData> files = gson.fromJson(content, listType);
+        return files;
     }
+
 }

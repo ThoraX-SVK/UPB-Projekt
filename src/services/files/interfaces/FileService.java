@@ -13,6 +13,10 @@ public interface FileService {
 
     List<FileData> findAllAccessibleFilesByUsername(String username) throws DatabaseNotLoadedException;
 
+    List<String> findAllFileOwnersUsernames(String fileId) throws DatabaseNotLoadedException;
+
+    List<String> findAllFileGuestsUsernames(String fileId) throws DatabaseNotLoadedException;
+
     FileData findFile(String fileId);
 
     String saveFile(String fileName, String encryptionKey, EncryptionType encryptionType) throws FileDataNotPersistedException, DatabaseNotLoadedException;

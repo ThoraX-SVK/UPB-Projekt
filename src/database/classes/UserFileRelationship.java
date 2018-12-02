@@ -43,6 +43,14 @@ public class UserFileRelationship {
         accessibleFiles.add(fileId);
     }
 
+    public boolean isFileOwnedByUser(String fileId) {
+        return getOwnedFiles().contains(fileId);
+    }
+
+    public boolean isFileAccessibleByUser(String fileId) {
+        return getAccessibleFiles().contains(fileId);
+    }
+
     public Set<String> getOwnedFiles() {
         return ownedFiles;
     }

@@ -102,7 +102,7 @@
         <url-pattern>/upload</url-pattern>
     </servlet-mapping>
     
-    <!-- File upload -->
+    <!-- File download -->
     <servlet>
         <servlet-name>FileDownloadHandler</servlet-name>
         <servlet-class>handlers.files.FileDownloadHandler</servlet-class>
@@ -110,6 +110,21 @@
     <servlet-mapping>
         <servlet-name>FileDownloadHandler</servlet-name>
         <url-pattern>/download/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- File detail -->
+    <servlet>
+        <servlet-name>FileDetailHandler</servlet-name>
+        <servlet-class>handlers.files.FileDetailHandler</servlet-class>
+
+        <init-param>
+            <param-name>fileId</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileDetailHandler</servlet-name>
+        <url-pattern>/detail</url-pattern>
     </servlet-mapping>
 
     <!-- My files -->
@@ -126,10 +141,15 @@
     <servlet>
         <servlet-name>CommentsHandler</servlet-name>
         <servlet-class>handlers.files.CommentsHandler</servlet-class>
+
+        <init-param>
+            <param-name>fileId</param-name>
+            <param-value></param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommentsHandler</servlet-name>
-        <url-pattern>/comments</url-pattern>
+        <url-pattern>/submit</url-pattern>
     </servlet-mapping>
 
     <!-- Homepage -->

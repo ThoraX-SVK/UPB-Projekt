@@ -62,6 +62,7 @@ public class FileRepository extends VeryBasicJsonDataRepository {
     }
 
     private String makeFileId(String fileName) {
+        fileName = fileName.replace(" ", "");
         return new Date().getTime() + "_" + fileName;
     }
 

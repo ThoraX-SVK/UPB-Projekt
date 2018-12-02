@@ -10,17 +10,60 @@
 
 <html>
 <head>
-    <title>Homepage</title>
+    <title>My files</title>
 </head>
 
 <body>
 
-<h1>Homepage</h1>
+<h1>My Files</h1>
 
 <div>Logged in as: ${sessionScope.username}</div>
 &nbsp;
 <a href="${pageContext.request.contextPath}/logout">Logout</a>
 
+<br/><br/>
+<h2>Owned files</h2>
+<c:forEach items="${ownFiles}" var="element">
+    <div class="file-wrapper">
+        <a href="${pageContext.request.contextPath}/detail?fileId=${element.getFileId()}">
+            ${element.getFileName()}
+        </a>
+
+        &nbsp;
+        <a href="${pageContext.request.contextPath}/download/${element.getFileId()}">
+                download file
+        </a>
+
+        &nbsp;
+        <span>${element.getEncryptionKey()}</span> &nbsp;
+        <span>${element.getEncryptionType()}</span> &nbsp;&nbsp;
+    </div> <br/>
+</c:forEach>
+
+<br/><br/>
+<h2>Guest files</h2>
+<c:forEach items="${guestFiles}" var="element">
+    <div class="file-wrapper">
+        <a href="${pageContext.request.contextPath}/detail?fileId=${element.getFileId()}">
+            ${element.getFileName()}
+        </a>
+
+        &nbsp;
+        <a href="${pageContext.request.contextPath}/download/${element.getFileId()}">
+                download file
+        </a>
+
+        &nbsp;
+        <span>${element.getEncryptionKey()}</span> &nbsp;
+        <span>${element.getEncryptionType()}</span> &nbsp;&nbsp;
+    </div> <br/>
+</c:forEach>
+
+<div class="upload-file-wrapper">
+    <a href="${pageContext.request.contextPath}/upload">
+        Upload new file
+    </a>
+</div>
 
 </body>
 </html>

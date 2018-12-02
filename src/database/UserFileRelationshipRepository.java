@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
 import database.classes.UserFileRelationship;
+import database.exceptions.DatabaseNotLoadedException;
 import domain.utils.FileUtils;
 
 import java.io.File;
@@ -17,10 +18,10 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
     private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
 
 
-    public void addRecord(String username) throws IOException {
+    public void addRecord(String username) throws IOException, DatabaseNotLoadedException {
         createIfNotExists(dataFile, dataFileLocation);
 
-        Map<String, UserFileRelationship> content = getAll();
+        Map<String, UserFileRelationship> content = load();
         if (!content.containsKey(username)) {
             content.put(username, UserFileRelationship.empty(username));
         }
@@ -28,8 +29,8 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
     }
 
 
-    public void addOwnerToFile(String username, String fileId) throws IOException {
-        Map<String, UserFileRelationship> content = getAll();
+    public void addOwnerToFile(String username, String fileId) throws DatabaseNotLoadedException {
+        Map<String, UserFileRelationship> content = load();
 
         if (content.containsKey(username)) {
             UserFileRelationship ufr = content.get(username);
@@ -39,8 +40,8 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
         save(content);
     }
 
-    public void addGuestToFile(String username, String fileId) throws IOException {
-        Map<String, UserFileRelationship> content = getAll();
+    public void addGuestToFile(String username, String fileId) throws DatabaseNotLoadedException {
+        Map<String, UserFileRelationship> content = load();
 
         if (content.containsKey(username)) {
             UserFileRelationship ufr = content.get(username);
@@ -50,34 +51,44 @@ public class UserFileRelationshipRepository extends VeryBasicJsonDataRepository 
         save(content);
     }
 
-    public UserFileRelationship findByUsername(String username) throws IOException {
-        Map<String, UserFileRelationship> content = getAll();
+    public UserFileRelationship findByUsername(String username) throws DatabaseNotLoadedException {
+        Map<String, UserFileRelationship> content = load();
 
         return content.getOrDefault(username, null);
     }
 
-
-    private Map<String, UserFileRelationship> getAll() throws IOException {
-        Gson gson = getGsonInstance();
-
-        File db = new File(dataFile);
-        String content = FileUtils.readFile(db);
-        Type listType = getUserFileDataMapType();
-
-        Map<String, UserFileRelationship> files = gson.fromJson(content, listType);
-        return files;
-    }
 
     private Type getUserFileDataMapType() {
         return new TypeToken<Map<String, UserFileRelationship>>() {}.getType();
     }
 
     @Override
-    void save(Map files) throws IOException {
+    protected void save(Map files) throws DatabaseNotLoadedException {
         Gson gson = getGsonInstance();
         String serializedJson = gson.toJson(files);
 
         File db = new File(dataFile);
-        FileUtils.writeToFile(serializedJson, db);
+        try {
+            FileUtils.writeToFile(serializedJson, db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+    }
+
+    @Override
+    protected Map<String, UserFileRelationship> load() throws DatabaseNotLoadedException {
+        Gson gson = getGsonInstance();
+
+        File db = new File(dataFile);
+        String content;
+        try {
+            content = FileUtils.readFile(db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+        Type listType = getUserFileDataMapType();
+
+        Map<String, UserFileRelationship> files = gson.fromJson(content, listType);
+        return files;
     }
 }

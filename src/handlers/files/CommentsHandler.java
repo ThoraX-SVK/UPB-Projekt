@@ -6,6 +6,8 @@ import database.FileCommentsRepository;
 import database.FileRepository;
 import database.classes.Comment;
 import database.classes.EncryptionType;
+import database.exceptions.DatabaseNotLoadedException;
+import database.exceptions.FileDataNotPersistedException;
 import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
 
@@ -37,7 +39,14 @@ public class CommentsHandler extends HttpServlet {
 
         File file = new File(SystemFilePaths.UPLOAD_DIRECTORY + File.separator + "test.txt");
 
-        String fileId = fileRepository.addFile(file.getName(), "tzvbhjvgtzhjb", EncryptionType.ASYMMETRICAL);
+        String fileId = null;
+        try {
+            fileId = fileRepository.addFile(file.getName(), "tzvbhjvgtzhjb", EncryptionType.ASYMMETRICAL);
+        } catch (FileDataNotPersistedException e) {
+            e.printStackTrace();
+        } catch (DatabaseNotLoadedException e) {
+            e.printStackTrace();
+        }
         String title = "Title";
         String content = "BLA BLA THANK YOU KOKOT VERY COOL";
         Comment comment = Comment
@@ -45,9 +54,12 @@ public class CommentsHandler extends HttpServlet {
                 .writtenBy(username)
                 .withCurrentDate();
 
-        fileCommentsRepository.publish(comment, fileId);
-
-        List<Comment> comments = fileCommentsRepository.getAllByFileId(fileId);
+        try {
+            fileCommentsRepository.publish(comment, fileId);
+            List<Comment> comments = fileCommentsRepository.getAllByFileId(fileId);
+        } catch (DatabaseNotLoadedException e) {
+            e.printStackTrace();
+        }
 
     }
 

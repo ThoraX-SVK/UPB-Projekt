@@ -92,6 +92,26 @@
         <url-pattern>/offlineDecrypt</url-pattern>
     </servlet-mapping>
 
+    <!-- File upload -->
+    <servlet>
+        <servlet-name>FileUploadHandler</servlet-name>
+        <servlet-class>handlers.files.FileUploadHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileUploadHandler</servlet-name>
+        <url-pattern>/upload</url-pattern>
+    </servlet-mapping>
+    
+    <!-- File upload -->
+    <servlet>
+        <servlet-name>FileDownloadHandler</servlet-name>
+        <servlet-class>handlers.files.FileDownloadHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileDownloadHandler</servlet-name>
+        <url-pattern>/download/*</url-pattern>
+    </servlet-mapping>
+
     <!-- My files -->
     <servlet>
         <servlet-name>MyFilesHandler</servlet-name>

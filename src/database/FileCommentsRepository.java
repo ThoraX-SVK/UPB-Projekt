@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
 import database.classes.Comment;
+import database.exceptions.DatabaseNotLoadedException;
 import domain.utils.FileUtils;
 
 import java.io.File;
@@ -16,10 +17,10 @@ public class FileCommentsRepository extends VeryBasicJsonDataRepository {
     private String dataFile = SystemFilePaths.DATABASE_LOCATION + File.separator + "commentsDB.json";
     private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
 
-    public void publish(Comment comment, String fileId) throws IOException {
+    public void publish(Comment comment, String fileId) throws IOException, DatabaseNotLoadedException {
         createIfNotExists(dataFile, dataFileLocation);
 
-        Map<String, List<Comment>> allFileComments = getAll();
+        Map<String, List<Comment>> allFileComments = load();
 
         List<Comment> comments = allFileComments.getOrDefault(fileId, new LinkedList<>());
         comments.add(comment);
@@ -28,21 +29,11 @@ public class FileCommentsRepository extends VeryBasicJsonDataRepository {
         save(allFileComments);
     }
 
-    public List<Comment> getAllByFileId(String fileId) throws IOException {
-        Map<String, List<Comment>> fileComments = getAll();
+    public List<Comment> getAllByFileId(String fileId) throws DatabaseNotLoadedException {
+        Map<String, List<Comment>> fileComments = load();
         List<Comment> comments = fileComments.getOrDefault(fileId, new LinkedList<>());
         comments.sort(Comparator.comparing(Comment::getPublishDate));
         return comments;
-    }
-
-    public Map<String, List<Comment>> getAll() throws IOException {
-        Gson gson = getGsonInstance();
-
-        File db = new File(dataFile);
-        String content = FileUtils.readFile(db);
-        Type listType = getCommentMapType();
-
-        return gson.fromJson(content, listType);
     }
 
     private Type getCommentMapType() {
@@ -50,13 +41,32 @@ public class FileCommentsRepository extends VeryBasicJsonDataRepository {
 
     }
 
-
     @Override
-    void save(Map data) throws IOException {
+    protected void save(Map data) throws DatabaseNotLoadedException {
         Gson gson = getGsonInstance();
         String serializedJson = gson.toJson(data);
 
         File db = new File(dataFile);
-        FileUtils.writeToFile(serializedJson, db);
+        try {
+            FileUtils.writeToFile(serializedJson, db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+    }
+
+    @Override
+    protected Map<String, List<Comment>> load() throws DatabaseNotLoadedException {
+        Gson gson = getGsonInstance();
+
+        File db = new File(dataFile);
+        String content;
+        try {
+            content = FileUtils.readFile(db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+        Type listType = getCommentMapType();
+
+        return gson.fromJson(content, listType);
     }
 }

@@ -1,6 +1,7 @@
 package database;
 
 import database.classes.UserData;
+import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.UserAlreadyExistsException;
 
 import java.io.*;
@@ -17,9 +18,9 @@ public class UserRepository extends VeryBasicJsonDataRepository {
     private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
 
 
-    public void add(String username, String passwordAndSalt) throws IOException, UserAlreadyExistsException {
+    public void add(String username, String passwordAndSalt) throws DatabaseNotLoadedException, UserAlreadyExistsException, IOException {
         createIfNotExists(dataFile, dataFileLocation);
-        Map<String, String> dbContent = getContent();
+        Map<String, String> dbContent = load();
 
         if (dbContent.containsKey(username))
             throw UserAlreadyExistsException.fromUsername(username);
@@ -32,8 +33,8 @@ public class UserRepository extends VeryBasicJsonDataRepository {
 
         Map<String, String> dbContent;
         try {
-            dbContent = getContent();
-        } catch (IOException e) {
+            dbContent = load();
+        } catch (DatabaseNotLoadedException e) {
             return null;
         }
 
@@ -47,20 +48,30 @@ public class UserRepository extends VeryBasicJsonDataRepository {
 
     }
 
-    private Map<String, String> getContent() throws IOException {
-        MapToStringSerializer serializer = new JsonSerializerImpl();
-
-        File db = new File(dataFile);
-        String content = FileUtils.readFile(db);
-
-        return serializer.deserializeMap(content);
-    }
-
     @Override
-    void save(Map dbContent) throws IOException {
+    protected void save(Map dbContent) throws DatabaseNotLoadedException {
         File db = new File(dataFile);
         MapToStringSerializer mapToFileSerializer = new JsonSerializerImpl();
         String fileContent = mapToFileSerializer.serializeMap(dbContent);
-        FileUtils.writeToFile(fileContent, db);
+        try {
+            FileUtils.writeToFile(fileContent, db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+    }
+
+    @Override
+    protected Map<String, String> load() throws DatabaseNotLoadedException {
+        MapToStringSerializer serializer = new JsonSerializerImpl();
+
+        File db = new File(dataFile);
+        String content;
+        try {
+            content = FileUtils.readFile(db);
+        } catch (IOException e) {
+            throw DatabaseNotLoadedException.generic(e);
+        }
+
+        return serializer.deserializeMap(content);
     }
 }

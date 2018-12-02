@@ -1,19 +1,19 @@
-package database;
+package database.classes;
 
-public class Result {
+public class UserData {
 
     private String username;
     private String password;
     private String salt;
 
-    public Result(String username, String password, String salt) {
+    public UserData(String username, String password, String salt) {
         this.username = username;
         this.password = password;
         this.salt = salt;
     }
 
-    public static Result fromUserData(String username, String password, String salt) {
-        return new Result(username, password, salt);
+    public static UserData fromUserData(String username, String password, String salt) {
+        return new UserData(username, password, salt);
     }
 
     public String getUsername() {

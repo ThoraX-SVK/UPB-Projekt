@@ -1,7 +1,7 @@
 package services.auth;
 
-import database.Database;
-import database.Result;
+import database.UserRepository;
+import database.classes.UserData;
 import database.exceptions.UserAlreadyExistsException;
 import services.auth.interfaces.IRegistrationService;
 import services.auth.interfaces.PasswordSecurity;
@@ -10,13 +10,15 @@ import services.auth.interfaces.PasswordSecurity;
 public class RegistrationService implements IRegistrationService {
 
     private PasswordSecurity passwordSecurity = new PasswordSecurityImpl();
+    private UserRepository userRepository = new UserRepository();
 
     @Override
     public void registerUser(String username, String password) throws Exception {
 
         try {
             String passwordAndSalt = passwordSecurity.createHashAndSaltString(password);
-            Database.add(username, passwordAndSalt);
+            String[] passwordAndSaltSplit = passwordAndSalt.split(":");
+            userRepository.add(username, passwordAndSaltSplit[0], passwordAndSaltSplit[1]);
 
         } catch (UserAlreadyExistsException e) {
             throw e;
@@ -29,7 +31,7 @@ public class RegistrationService implements IRegistrationService {
 
     @Override
     public void checkUsernameAvailable(String username) throws UserAlreadyExistsException {
-        Result found = Database.find(username);
+        UserData found = userRepository.find(username);
         if (found != null) {
             throw UserAlreadyExistsException.fromUsername(username);
         }

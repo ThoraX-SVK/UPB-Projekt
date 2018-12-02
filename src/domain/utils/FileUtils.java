@@ -74,4 +74,9 @@ public class FileUtils {
         fooStream.close();
     }
 
+    public static void writeInputStreamToFile(InputStream is, File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        IOUtils.copy(is, fos);
+        fos.close();
+    }
 }

@@ -3,6 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+    <filter>
+        <filter-name>XSSFilter</filter-name>
+        <filter-class>handlers.filters.CrossSiteScriptingXSSFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>XSSFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <servlet>
         <servlet-name>LoginHandler</servlet-name>
@@ -90,6 +98,66 @@
     <servlet-mapping>
         <servlet-name>OfflineDecryptionDownloadHandler</servlet-name>
         <url-pattern>/offlineDecrypt</url-pattern>
+    </servlet-mapping>
+
+    <!-- File upload -->
+    <servlet>
+        <servlet-name>FileUploadHandler</servlet-name>
+        <servlet-class>handlers.files.FileUploadHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileUploadHandler</servlet-name>
+        <url-pattern>/upload</url-pattern>
+    </servlet-mapping>
+    
+    <!-- File download -->
+    <servlet>
+        <servlet-name>FileDownloadHandler</servlet-name>
+        <servlet-class>handlers.files.FileDownloadHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileDownloadHandler</servlet-name>
+        <url-pattern>/download/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- File detail -->
+    <servlet>
+        <servlet-name>FileDetailHandler</servlet-name>
+        <servlet-class>handlers.files.FileDetailHandler</servlet-class>
+
+        <init-param>
+            <param-name>fileId</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileDetailHandler</servlet-name>
+        <url-pattern>/detail</url-pattern>
+    </servlet-mapping>
+
+    <!-- My files -->
+    <servlet>
+        <servlet-name>MyFilesHandler</servlet-name>
+        <servlet-class>handlers.files.MyFilesHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyFilesHandler</servlet-name>
+        <url-pattern>/myFiles</url-pattern>
+    </servlet-mapping>
+
+    <!-- File comments -->
+    <servlet>
+        <servlet-name>CommentsHandler</servlet-name>
+        <servlet-class>handlers.files.CommentsHandler</servlet-class>
+
+        <init-param>
+            <param-name>fileId</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CommentsHandler</servlet-name>
+        <url-pattern>/submit</url-pattern>
     </servlet-mapping>
 
     <!-- Homepage -->

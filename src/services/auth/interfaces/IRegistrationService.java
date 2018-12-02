@@ -4,6 +4,6 @@ import database.exceptions.UserAlreadyExistsException;
 
 public interface IRegistrationService {
 
-    public void registerUser(String username, String password) throws Exception;
-    public void checkUsernameAvailable(String username) throws UserAlreadyExistsException;
+    void registerUser(String username, String password) throws Exception;
+    void checkUsernameAvailable(String username) throws UserAlreadyExistsException;
 }

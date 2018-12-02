@@ -19,6 +19,11 @@
 &nbsp;
 <a href="${pageContext.request.contextPath}/logout">Logout</a>
 
+<br/>
+
+<h2>Library</h2>
+<a href="${pageContext.request.contextPath}/myFiles">My files</a>
+
 <h2>Symmetrical cryptography: </h2>
 <a href="${pageContext.request.contextPath}/encrypt">symmetric encrypt</a> <br/>
 <a href="${pageContext.request.contextPath}/decrypt">symmetric decrypt</a> <br/>

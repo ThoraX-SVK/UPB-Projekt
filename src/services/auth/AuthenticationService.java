@@ -1,7 +1,7 @@
 package services.auth;
 
-import database.Database;
-import database.Result;
+import database.UserRepository;
+import database.classes.UserData;
 import services.auth.interfaces.IAuthenticationService;
 import services.auth.interfaces.PasswordSecurity;
 
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthenticationService implements IAuthenticationService {
 
     private PasswordSecurity passwordSecurity = new PasswordSecurityImpl();
+    private UserRepository userRepository = new UserRepository();
 
     @Override
     public boolean authenticateFromRequest(HttpServletRequest request) {
@@ -29,7 +30,7 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     private boolean checkPasswordMatches(String username, String password) {
-        Result foundUser = Database.find(username);
+        UserData foundUser = userRepository.find(username);
         if (foundUser == null)
             return false;
 

@@ -135,6 +135,21 @@
         <url-pattern>/detail</url-pattern>
     </servlet-mapping>
 
+    <!-- Grant user privilege (owner or guest) -->
+    <servlet>
+        <servlet-name>UserFileRelationshipHandler</servlet-name>
+        <servlet-class>handlers.files.UserFileRelationshipHandler</servlet-class>
+
+        <init-param>
+            <param-name>fileId</param-name>
+            <param-value></param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserFileRelationshipHandler</servlet-name>
+        <url-pattern>/privilege</url-pattern>
+    </servlet-mapping>
+
     <!-- My files -->
     <servlet>
         <servlet-name>MyFilesHandler</servlet-name>

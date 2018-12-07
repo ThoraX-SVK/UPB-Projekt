@@ -28,28 +28,55 @@
 <div>${file.getEncryptionKey()}</div>
 <div>${file.getEncryptionType()}</div>
 
+<br><br>
+
 <div>Owners of file:</div>
 <c:forEach items="${owners}" var="element">
     <div class="owners-wrapper">
         &nbsp;${element}
-    </div> <br/>
+    </div>
 </c:forEach>
+
+<br>
 
 <div>Guests (Viewers & commenters) of file:</div>
 <c:forEach items="${guests}" var="element">
     <div class="owners-wrapper">
         &nbsp;${element}
-    </div> <br/>
+    </div>
 </c:forEach>
 
+<c:choose>
+    <c:when test="${isUserOwner}">
+        <br/><br/>
+        <div>Add privilege to User (Owner or Guest): <br/>
+            <form action="${pageContext.request.contextPath}/privilege?fileId=${file.getFileId()}" method="post">
+                <select name="selectedUser" required>
+                        <%-- options of users - username is basically user id --%>
+                    <c:forEach items="${allUsers}" var="username">
+                        <option value="${username}">${username}</option>
+                    </c:forEach>
+                </select>
 
+                <select name="relationshipType" required>
+                    <option value="OWNER">Owner</option>
+                    <option value="GUEST">Guest</option>
+                </select>
+
+                <input type="submit" value="Process">
+            </form>
+        </div>
+    </c:when>
+</c:choose>
+
+<br/>
+<div>Comments:</div>
 <c:forEach items="${comments}" var="element">
     <div class="comment-wrapper">
-        &nbsp;
         <h4 class="comment-title">${element.getTitle()} - ${element.getPublishDate()}</h4>
         <p>${element.getContent()}</p>
         <p>- submitted by: ${element.getAuthorUsername()}</p>
-    </div> <br/>
+    </div>
 </c:forEach>
 
 <form method="post" action="${pageContext.request.contextPath}/submit?fileId=${file.getFileId()}" class="submit-new-comment-form">

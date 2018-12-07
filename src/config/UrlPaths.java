@@ -7,5 +7,4 @@ public class UrlPaths {
     public static final String MY_FILES_PATH = "myFiles";
     public static final String FILE_DETAIL_PATH = "detail";
 
-
 }

@@ -1,14 +1,11 @@
 package database;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
 import database.classes.EncryptionType;
 import database.classes.FileData;
-import database.classes.UserData;
 import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.FileDataNotPersistedException;
-import domain.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,18 +14,22 @@ import java.util.*;
 
 public class FileRepository extends VeryBasicJsonDataRepository {
 
-    private String dataFile = SystemFilePaths.DATABASE_LOCATION + File.separator + "fileDB.json";
-    private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
+    private static final String DATA_FILE = SystemFilePaths.DATABASE_LOCATION + File.separator + "fileDB.json";
+    private static final String DATA_FILE_LOCATION = SystemFilePaths.DATABASE_LOCATION;
 
+    public FileRepository() {
+        super(DATA_FILE, DATA_FILE_LOCATION);
+    }
 
-    public String addFile(String fileName, String encryptionKey, EncryptionType encryptionType) throws FileDataNotPersistedException, DatabaseNotLoadedException {
+    public String addFile(FileData fileData) throws FileDataNotPersistedException, DatabaseNotLoadedException {
         try {
-            createIfNotExists(dataFile, dataFileLocation);
+            createIfNotExists();
 
-            String newFileId = makeFileId(fileName);
+            String newFileId = makeFileId(fileData.getFileName());
             Map<String, FileData> files = load();
 
-            files.put(newFileId, new FileData(newFileId, fileName, encryptionKey, encryptionType));
+            fileData.setId(newFileId);
+            files.put(newFileId, fileData);
             save(files);
 
             return newFileId;
@@ -78,38 +79,8 @@ public class FileRepository extends VeryBasicJsonDataRepository {
         return new Date().getTime() + "_" + fileName;
     }
 
-    private Type getFileDataMapType() {
+    protected Type getDataMapType() {
         return new TypeToken<Map<String, FileData>>() {
         }.getType();
-    }
-
-    @Override
-    void save(Map files) throws DatabaseNotLoadedException {
-        Gson gson = getGsonInstance();
-        String serializedJson = gson.toJson(files);
-
-        File db = new File(dataFile);
-        try {
-            FileUtils.writeToFile(serializedJson, db);
-        } catch (IOException e) {
-            throw DatabaseNotLoadedException.generic(e);
-        }
-    }
-
-    @Override
-    public Map<String, FileData> load() throws DatabaseNotLoadedException {
-        Gson gson = getGsonInstance();
-
-        File db = new File(dataFile);
-        String content;
-        try {
-            content = FileUtils.readFile(db);
-        } catch (IOException e) {
-            throw DatabaseNotLoadedException.generic(e);
-        }
-        Type listType = getFileDataMapType();
-
-        Map<String, FileData> files = gson.fromJson(content, listType);
-        return files;
     }
 }

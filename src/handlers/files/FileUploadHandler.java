@@ -68,11 +68,12 @@ public class FileUploadHandler extends HttpServlet {
 
     private FileData getFileInfoFromRequest(HttpServletRequest request) throws Exception {
         Part filePart = request.getPart("file");
+        String username = (String) request.getSession().getAttribute("username");
         String fileName = MultiPartUtils.getSubmittedFileName(filePart);
         String encryptionKey = request.getParameter("encryptionKey");
         EncryptionType encryptionType = EncryptionType.fromString(request.getParameter("encryptionType"));
 
-        return new FileData(fileName, encryptionKey, encryptionType);
+        return new FileData(fileName, encryptionKey, encryptionType, UserUtils.getUserFileDirectory(username));
     }
 
     private void saveFileFromRequestPart(HttpServletRequest request, String fileName, String dir) throws IOException, ServletException {

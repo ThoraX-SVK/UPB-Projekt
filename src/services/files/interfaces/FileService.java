@@ -19,7 +19,7 @@ public interface FileService {
 
     FileData findFile(String fileId);
 
-    String saveFile(String fileName, String encryptionKey, EncryptionType encryptionType) throws FileDataNotPersistedException, DatabaseNotLoadedException;
+    String saveFile(String fileName, String encryptionKey, EncryptionType encryptionType, String uploadFolder) throws FileDataNotPersistedException, DatabaseNotLoadedException;
 
     String saveFile(FileData fileData) throws FileDataNotPersistedException, DatabaseNotLoadedException;
 
@@ -31,4 +31,5 @@ public interface FileService {
 
     boolean canUserAccessFile(String username, String fileId) throws DatabaseNotLoadedException;
 
+    boolean fileExists(String fileId);
 }

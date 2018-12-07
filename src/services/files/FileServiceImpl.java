@@ -9,7 +9,6 @@ import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.FileDataNotPersistedException;
 import services.files.interfaces.FileService;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,21 +77,23 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String saveFile(String fileName, String encryptionKey, EncryptionType encryptionType) throws FileDataNotPersistedException, DatabaseNotLoadedException {
+    public String saveFile(String fileName, String encryptionKey, EncryptionType encryptionType, String uploadFolder) throws FileDataNotPersistedException, DatabaseNotLoadedException {
+        return saveFile(
+                new FileData(fileName, encryptionKey, encryptionType, uploadFolder)
+        );
+    }
+
+    @Override
+    public String saveFile(FileData fileData) throws FileDataNotPersistedException, DatabaseNotLoadedException {
+
         try {
-            String fileId = fileRepository.addFile(fileName, encryptionKey, encryptionType);
+            String fileId = fileRepository.addFile(fileData);
             return fileId;
 
         } catch (FileDataNotPersistedException e) {
             e.printStackTrace();
             throw e;
         }
-
-    }
-
-    @Override
-    public String saveFile(FileData fileData) throws FileDataNotPersistedException, DatabaseNotLoadedException {
-        return saveFile(fileData.getFileName(), fileData.getEncryptionKey(), fileData.getEncryptionType());
     }
 
     @Override
@@ -121,6 +122,13 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         return userFileRelationship.isFileOwnedByUser(fileId) || userFileRelationship.isFileAccessibleByUser(fileId);
+    }
+
+    @Override
+    public boolean fileExists(String fileId) {
+        FileData fileData = findFile(fileId);
+
+        return fileData != null;
     }
 
 }

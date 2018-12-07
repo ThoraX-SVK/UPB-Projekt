@@ -6,21 +6,24 @@ public class FileData {
     private String fileName;
     private String encryptionKey;
     private EncryptionType encryptionType;
+    private String uploadFolder;
 
     public FileData() {
     }
 
-    public FileData(String fileName, String encryptionKey, EncryptionType encryptionType) {
+    public FileData(String fileName, String encryptionKey, EncryptionType encryptionType, String uploadFolder) {
         this.fileName = fileName;
         this.encryptionKey = encryptionKey;
         this.encryptionType = encryptionType;
+        this.uploadFolder = uploadFolder;
     }
 
-    public FileData(String fileId, String fileName, String encryptionKey, EncryptionType encryptionType) {
+    public FileData(String fileId, String fileName, String encryptionKey, EncryptionType encryptionType, String uploadFolder) {
         this.fileId = fileId;
         this.fileName = fileName;
         this.encryptionKey = encryptionKey;
         this.encryptionType = encryptionType;
+        this.uploadFolder = uploadFolder;
     }
 
     public String getFileId() {
@@ -37,5 +40,13 @@ public class FileData {
 
     public EncryptionType getEncryptionType() {
         return encryptionType;
+    }
+
+    public String getUploadFolder() {
+        return uploadFolder;
+    }
+
+    public void setId(String newFileId) {
+        this.fileId = newFileId;
     }
 }

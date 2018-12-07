@@ -40,7 +40,6 @@
     </div> <br/>
 </c:forEach>
 
-<br/><br/>
 <h2>Guest files</h2>
 <c:forEach items="${guestFiles}" var="element">
     <div class="file-wrapper">

@@ -45,7 +45,7 @@ public class FileDownloadHandler extends HttpServlet {
                 return;
             }
 
-            File file = getFile(fileId, UserUtils.getUserFileDirectory(username));
+            File file = getFile(fileId);
             if (file != null) {
                 writeToResponseOutputStream(response, FileUtils.fileToByteArray(file), file.getName());
             }
@@ -55,10 +55,10 @@ public class FileDownloadHandler extends HttpServlet {
         }
     }
 
-    private File getFile(String fileId, String fileDir) {
+    private File getFile(String fileId) {
         FileData fileData = fileService.findFile(fileId);
 
-        File file = new File(fileDir + File.separator + fileData.getFileName());
+        File file = new File(fileData.getUploadFolder() + File.separator + fileData.getFileName());
         if (!file.exists()) {
             return null;
         }

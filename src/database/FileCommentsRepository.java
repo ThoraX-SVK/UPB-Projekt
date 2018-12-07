@@ -1,11 +1,9 @@
 package database;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.SystemFilePaths;
 import database.classes.Comment;
 import database.exceptions.DatabaseNotLoadedException;
-import domain.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +12,15 @@ import java.util.*;
 
 public class FileCommentsRepository extends VeryBasicJsonDataRepository {
 
-    private String dataFile = SystemFilePaths.DATABASE_LOCATION + File.separator + "commentsDB.json";
-    private String dataFileLocation = SystemFilePaths.DATABASE_LOCATION;
+    private static final String DATA_FILE = SystemFilePaths.DATABASE_LOCATION + File.separator + "commentsDB.json";
+    private static final String DATA_FILE_LOCATION = SystemFilePaths.DATABASE_LOCATION;
+
+    public FileCommentsRepository() {
+        super(DATA_FILE, DATA_FILE_LOCATION);
+    }
 
     public void publish(Comment comment, String fileId) throws IOException, DatabaseNotLoadedException {
-        createIfNotExists(dataFile, dataFileLocation);
+        createIfNotExists();
 
         Map<String, List<Comment>> allFileComments = load();
 
@@ -36,37 +38,9 @@ public class FileCommentsRepository extends VeryBasicJsonDataRepository {
         return comments;
     }
 
-    private Type getCommentMapType() {
+    protected Type getDataMapType() {
         return new TypeToken<Map<String, List<Comment>>>() {}.getType();
 
     }
 
-    @Override
-    protected void save(Map data) throws DatabaseNotLoadedException {
-        Gson gson = getGsonInstance();
-        String serializedJson = gson.toJson(data);
-
-        File db = new File(dataFile);
-        try {
-            FileUtils.writeToFile(serializedJson, db);
-        } catch (IOException e) {
-            throw DatabaseNotLoadedException.generic(e);
-        }
-    }
-
-    @Override
-    protected Map<String, List<Comment>> load() throws DatabaseNotLoadedException {
-        Gson gson = getGsonInstance();
-
-        File db = new File(dataFile);
-        String content;
-        try {
-            content = FileUtils.readFile(db);
-        } catch (IOException e) {
-            throw DatabaseNotLoadedException.generic(e);
-        }
-        Type listType = getCommentMapType();
-
-        return gson.fromJson(content, listType);
-    }
 }

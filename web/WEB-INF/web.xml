@@ -154,6 +154,11 @@
     <servlet>
         <servlet-name>MyFilesHandler</servlet-name>
         <servlet-class>handlers.files.MyFilesHandler</servlet-class>
+
+        <init-param>
+            <param-name>search</param-name>
+            <param-value></param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>MyFilesHandler</servlet-name>

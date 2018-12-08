@@ -21,6 +21,12 @@
 &nbsp;
 <a href="${pageContext.request.contextPath}/logout">Logout</a>
 
+<br/>
+<form action="${pageContext.request.contextPath}/myFiles" method="get">
+    <input style="width: 150px;" type="text" name="search" value="${pageContext.request.getParameter("search")}">
+    <input type="submit" value="Search">
+</form>
+
 <br/><br/>
 <h2>Owned files</h2>
 <c:forEach items="${ownFiles}" var="element">

@@ -21,15 +21,14 @@ public class UserRepository extends VeryBasicJsonDataRepository {
         super(DATA_FILE, DATA_FILE_LOCATION);
     }
 
-    public void add(String username, String password, String salt) throws DatabaseNotLoadedException, UserAlreadyExistsException, IOException {
+    public void add(UserData userData) throws DatabaseNotLoadedException, UserAlreadyExistsException, IOException {
         createIfNotExists();
         Map<String, UserData> dbContent = load();
 
-        if (dbContent.containsKey(username))
-            throw UserAlreadyExistsException.fromUsername(username);
+        if (dbContent.containsKey(userData.getUsername()))
+            throw UserAlreadyExistsException.fromUsername(userData.getUsername());
 
-        UserData newUser = UserData.fromUserData(username, password, salt);
-        dbContent.put(username, newUser);
+        dbContent.put(userData.getUsername(), userData);
         save(dbContent);
     }
 

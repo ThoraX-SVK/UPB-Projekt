@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MyFilesHandler extends HttpServlet {
 
@@ -31,11 +32,15 @@ public class MyFilesHandler extends HttpServlet {
             return;
         }
 
+        String search = request.getParameter("search");
         String username = (String) request.getSession().getAttribute("username");
 
         try {
             List<FileData> ownFiles = fileService.findAllOwnedFilesByUsername(username);
             List<FileData> guestFiles = fileService.findAllAccessibleFilesByUsername(username);
+
+            ownFiles = filter(ownFiles, search);
+            guestFiles = filter(guestFiles, search);
 
             request.setAttribute("ownFiles", ownFiles);
             request.setAttribute("guestFiles", guestFiles);
@@ -45,5 +50,14 @@ public class MyFilesHandler extends HttpServlet {
         }
 
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
+    }
+
+    private List<FileData> filter(List<FileData> fileDataList, String search) {
+        if (search == null)
+            return fileDataList;
+
+        return fileDataList.stream()
+                .filter(fileData -> (fileData.getFileName().contains(search)))
+                .collect(Collectors.toList());
     }
 }

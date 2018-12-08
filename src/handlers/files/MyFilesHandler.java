@@ -23,7 +23,7 @@ public class MyFilesHandler extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private FileService fileService = new FileServiceImpl();
-    private static String TEMPLATE = "templates/myFiles.jsp";
+    private static final String TEMPLATE = "templates/myFiles.jsp";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

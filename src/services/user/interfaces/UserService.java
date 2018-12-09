@@ -16,5 +16,5 @@ public interface UserService {
 
     List<UserData> findAll() throws DatabaseNotLoadedException;
 
-    void save(UserData newUser) throws UserAlreadyExistsException, DatabaseNotLoadedException, IOException;
+    void save(UserData newUser) throws UserAlreadyExistsException, DatabaseNotLoadedException;
 }

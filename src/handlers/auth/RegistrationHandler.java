@@ -3,9 +3,9 @@ package handlers.auth;
 import com.fei.upb.PasswordStrength;
 import com.fei.upb.PasswordStrengthImpl;
 import config.UrlPaths;
+import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.UserAlreadyExistsException;
 import domain.utils.UrlUtils;
-import handlers.auth.exceptions.PasswordMismatchException;
 import services.auth.RegistrationService;
 import services.auth.interfaces.IRegistrationService;
 
@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegistrationHandler extends HttpServlet {
 
@@ -28,40 +30,44 @@ public class RegistrationHandler extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String passwordConfirm = request.getParameter("password_confirm");
-        String message;
+        String message = null;
 
-        try {
-            registrationService.checkUsernameAvailable(username);
-            if (!passwordsMatch(password, passwordConfirm)) {
-                throw PasswordMismatchException.generic();
+        registrationService.isUsernameAvailable(username);
 
-            } else if (username.equals(password)) {
-                throw new SecurityException("Password cannot be identical to username!");
-
-            } else if (!checkPasswordSecure(password)) {
-                throw new SecurityException();
-            }
-            registrationService.registerUser(username, password);
-            response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
-            return;
-
-        } catch (UserAlreadyExistsException e) {
-            message = "User with username " + username + " already exists!";
-
-        } catch (PasswordMismatchException e) {
+        if (!passwordsMatch(password, passwordConfirm)) {
             message = "Passwords do not match!";
+        } else if (username.equals(password)) {
+            message = "Password cannot be identical to username!";
+        } else if (!isUsernameValid(username)) {
+            message = "Username contains characters that are not letters or numbers!";
+        } else if (!registrationService.isUsernameAvailable(username)) {
+            message = "User with username " + username + " already exists!";
+        } else if (!checkPasswordSecure(password)) {
+            message = report;
+        }
 
-        } catch (SecurityException e) {
-            message = report != null ? report : e.getMessage();   // ugly, but then again so is everything
+        if (message == null) {
+            try {
+                registrationService.registerUser(username, password);
+                response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.LOGIN_PATH);
+                return;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            message = "There has been an error registering your account!";
+            } catch (UserAlreadyExistsException e) {
+                message = "User with username " + username + " already exists!";
+            } catch (DatabaseNotLoadedException e) {
+                message = "There has been a problem with your registration. Please try again.";
+            }
         }
 
         request.setAttribute("message", message);
         request.setAttribute("username", username);
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
+    }
+
+    private boolean isUsernameValid(String username) {
+        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(username);
+        return !m.find();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

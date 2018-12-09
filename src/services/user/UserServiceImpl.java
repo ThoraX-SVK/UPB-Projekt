@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(UserData userData) throws UserAlreadyExistsException, DatabaseNotLoadedException, IOException {
+    public void save(UserData userData) throws UserAlreadyExistsException, DatabaseNotLoadedException {
         userRepository.add(userData);
     }
 

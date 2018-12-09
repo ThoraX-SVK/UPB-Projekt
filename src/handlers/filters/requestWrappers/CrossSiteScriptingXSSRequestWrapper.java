@@ -8,17 +8,18 @@ import javax.servlet.http.HttpServletRequestWrapper;
 public class CrossSiteScriptingXSSRequestWrapper extends HttpServletRequestWrapper {
 
     private static Pattern[] patterns = new Pattern[]{
-            Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-            Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*<script>(.*?)</script>\\s*", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("\\s*src[\r\n]*=[\r\n]*\\\'(.*?)\\\'\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*src[\r\n]*=[\r\n]*\\\"(.*?)\\\"\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
             Pattern.compile("", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*<script(.*?)>\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
             Pattern.compile("", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-            Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-            Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
-            Pattern.compile("javascript:", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("vbscript:", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL)
+            Pattern.compile("\\s*eval\\((.*?)\\)\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*expression\\((.*?)\\)\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*javascript:\\s*", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("\\s*vbscript:\\s*", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("\\s*onload(.*?)\\s*=\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL),
+            Pattern.compile("\\s*on(.*?)\\s*=\\s*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL)
     };
 
     public CrossSiteScriptingXSSRequestWrapper(HttpServletRequest servletRequest) {

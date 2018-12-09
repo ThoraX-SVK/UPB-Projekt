@@ -68,6 +68,7 @@ public class AsymmetricFileEncryptionHandler extends HttpServlet {
     private void writeToResponseOutputStream(HttpServletResponse response, AsymmetricEncryptionData encrypted) throws IOException {
 
         response.setHeader("Content-Disposition","attachment;filename=" + "asym_encrypted.zip");
+        response.setHeader("X-XSS-Protection","1");
         response.setContentType("application/octet-stream");
 
         String pathname = ZIP_DIRECTORY + File.separator + "asym_encrypted.zip";

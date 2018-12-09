@@ -27,6 +27,7 @@ public class LoginHandler extends HttpServlet {
             boolean isAuthenticated = authenticationService.authenticateFromRequest(request);
 
             if (isAuthenticated) {
+                response.setHeader("X-XSS-Protection","1");
                 response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.HOME_PATH);
             } else {
                 request.setAttribute("message", "Incorrect credentials!");

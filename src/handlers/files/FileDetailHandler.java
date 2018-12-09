@@ -49,6 +49,11 @@ public class FileDetailHandler extends HttpServlet {
         }
 
         try {
+            if (!fileService.canUserAccessFile(username, fileId)) {
+                response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.MY_FILES_PATH);
+                return;
+            }
+
             List<String> ownerUsernames = fileService.findAllFileOwnersUsernames(fileId);
             List<String> guestUsernames = fileService.findAllFileGuestsUsernames(fileId);
             List<Comment> comments = commentService.findAll(fileId);

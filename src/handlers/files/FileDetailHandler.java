@@ -5,6 +5,7 @@ import database.classes.Comment;
 import database.classes.FileData;
 import database.classes.UserData;
 import database.exceptions.DatabaseNotLoadedException;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
 import services.files.CommentServiceImpl;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class FileDetailHandler extends HttpServlet {
@@ -27,6 +30,8 @@ public class FileDetailHandler extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private static final String TEMPLATE = "templates/fileDetail.jsp";
+
+    private static final Logger logger = Logger.getLogger(FileDetailHandler.class.getName());
 
     private FileService fileService = new FileServiceImpl();
     private CommentService commentService = new CommentServiceImpl();
@@ -68,6 +73,7 @@ public class FileDetailHandler extends HttpServlet {
 
         } catch (DatabaseNotLoadedException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
             request.setAttribute("message", "There has been a problem loading the comments on this file!");
         }
 

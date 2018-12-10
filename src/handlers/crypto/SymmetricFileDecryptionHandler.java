@@ -2,6 +2,7 @@ package handlers.crypto;
 
 import config.UrlPaths;
 import domain.crypto.symmetric.EncryptionData;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
 import domain.utils.UrlUtils;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static config.SystemFilePaths.UPLOAD_DIRECTORY;
 
@@ -25,6 +28,8 @@ public class SymmetricFileDecryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/SymDec.jsp";
+
+    private static final Logger logger = Logger.getLogger(SymmetricFileDecryptionHandler.class.getName());
 
     private IEncryptionService encryptionService = new EncryptionService();
 
@@ -50,6 +55,7 @@ public class SymmetricFileDecryptionHandler extends HttpServlet {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
                 request.setAttribute("message", dateTime.toString() + ": An error has occurred while processing your file!");
                 request.getRequestDispatcher(TEMPLATE).forward(request, response);
             }

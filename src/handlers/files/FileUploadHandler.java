@@ -3,10 +3,7 @@ package handlers.files;
 import config.UrlPaths;
 import database.classes.EncryptionType;
 import database.classes.FileData;
-import domain.utils.FileUtils;
-import domain.utils.MultiPartUtils;
-import domain.utils.UrlUtils;
-import domain.utils.UserUtils;
+import domain.utils.*;
 import services.auth.CookieAuthorization;
 import services.files.FileServiceImpl;
 import services.files.interfaces.FileService;
@@ -20,12 +17,16 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @MultipartConfig
 public class FileUploadHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/fileUpload.jsp";
+
+    private static final Logger logger = Logger.getLogger(FileUploadHandler.class.getName());
 
     private FileService fileService = new FileServiceImpl();
 
@@ -46,6 +47,7 @@ public class FileUploadHandler extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
             request.setAttribute("message", "There has been a problem.");
             request.getRequestDispatcher(TEMPLATE).forward(request, response);
             return;
@@ -73,7 +75,7 @@ public class FileUploadHandler extends HttpServlet {
         String encryptionKey = request.getParameter("encryptionKey");
         EncryptionType encryptionType = EncryptionType.fromString(request.getParameter("encryptionType"));
 
-        return new FileData(fileName, encryptionKey, encryptionType, UserUtils.getUserFileDirectory(username));
+        return new FileData(fileName, StringEscapeUtils.escapeHtml(encryptionKey), encryptionType, UserUtils.getUserFileDirectory(username));
     }
 
     private void saveFileFromRequestPart(HttpServletRequest request, String fileName, String dir) throws IOException, ServletException {

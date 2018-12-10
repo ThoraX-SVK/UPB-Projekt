@@ -9,9 +9,12 @@ import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import config.UrlPaths;
 import domain.crypto.symmetric.EncryptionData;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
 import domain.utils.UrlUtils;
@@ -28,6 +31,8 @@ public class SymmetricFileEncryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/SymEnc.jsp";
+
+    private static final Logger logger = Logger.getLogger(SymmetricFileEncryptionHandler.class.getName());
 
     private IEncryptionService encryptionService = new EncryptionService();
 
@@ -52,6 +57,7 @@ public class SymmetricFileEncryptionHandler extends HttpServlet {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
                 request.setAttribute("message", dateTime.toString() + ": An error has occurred while processing your file!");
                 request.getRequestDispatcher(TEMPLATE).forward(request, response);
             }

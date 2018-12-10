@@ -3,14 +3,13 @@ package handlers.files;
 import config.UrlPaths;
 import database.classes.FileData;
 import database.exceptions.DatabaseNotLoadedException;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.FileUtils;
 import domain.utils.UrlUtils;
-import domain.utils.UserUtils;
 import services.auth.CookieAuthorization;
 import services.files.FileServiceImpl;
 import services.files.interfaces.FileService;
 
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,12 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import static config.SystemFilePaths.USER_FILES_UPLOAD_DIRECTORY;
 
 public class FileDownloadHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = Logger.getLogger(FileDownloadHandler.class.getName());
 
     private FileService fileService = new FileServiceImpl();
 
@@ -52,6 +54,7 @@ public class FileDownloadHandler extends HttpServlet {
 
         } catch (DatabaseNotLoadedException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
         }
     }
 

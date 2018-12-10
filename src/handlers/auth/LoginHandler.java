@@ -23,7 +23,6 @@ public class LoginHandler extends HttpServlet {
     private static final String TEMPLATE = "templates/login.jsp";
     private static final Logger logger = Logger.getLogger(LoginHandler.class.getName());
 
-
     private IAuthenticationService authenticationService = new AuthenticationService();
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

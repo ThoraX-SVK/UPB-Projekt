@@ -6,7 +6,6 @@ import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.UserAlreadyExistsException;
 import services.user.interfaces.UserService;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 

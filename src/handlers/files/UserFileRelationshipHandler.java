@@ -1,29 +1,27 @@
 package handlers.files;
 
 import config.UrlPaths;
-import database.classes.Comment;
-import database.classes.FileData;
 import database.exceptions.DatabaseNotLoadedException;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
-import services.files.CommentServiceImpl;
 import services.files.FileServiceImpl;
-import services.files.interfaces.CommentService;
 import services.files.interfaces.FileService;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserFileRelationshipHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private FileService fileService = new FileServiceImpl();
+    private static final Logger logger = Logger.getLogger(UserFileRelationshipHandler.class.getName());
 
+    private FileService fileService = new FileServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = (String) request.getSession().getAttribute("username");
@@ -55,6 +53,7 @@ public class UserFileRelationshipHandler extends HttpServlet {
 
         } catch (DatabaseNotLoadedException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
         }
 
         response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.FILE_DETAIL_PATH + "?fileId=" + fileId);
@@ -64,7 +63,6 @@ public class UserFileRelationshipHandler extends HttpServlet {
         try {
             return fileService.isUserFileOwner(username, fileId) && fileService.fileExists(fileId);
         } catch (DatabaseNotLoadedException e) {
-            e.printStackTrace();
             throw e;
         }
     }

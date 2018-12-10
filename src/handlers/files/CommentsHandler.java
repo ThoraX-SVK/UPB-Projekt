@@ -3,7 +3,9 @@ package handlers.files;
 import config.UrlPaths;
 import database.classes.Comment;
 import database.exceptions.DatabaseNotLoadedException;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.UrlUtils;
+import domain.utils.StringEscapeUtils;
 import services.auth.CookieAuthorization;
 import services.files.CommentServiceImpl;
 import services.files.FileServiceImpl;
@@ -15,10 +17,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CommentsHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = Logger.getLogger(CommentsHandler.class.getName());
 
     private FileService fileService = new FileServiceImpl();
     private CommentService commentService = new CommentServiceImpl();
@@ -40,6 +46,7 @@ public class CommentsHandler extends HttpServlet {
             }
         } catch (DatabaseNotLoadedException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
             response.sendRedirect(UrlUtils.getUrlFromRequest(request) + UrlPaths.FILE_DETAIL_PATH + "?fileId=" + fileId);
             return;
         }
@@ -54,7 +61,10 @@ public class CommentsHandler extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         Comment comment = Comment
-                .fromTitleAndContent(title, content)
+                .fromTitleAndContent(
+                        StringEscapeUtils.escapeHtml(title),
+                        StringEscapeUtils.escapeHtml(content)
+                )
                 .writtenBy(username)
                 .withCurrentDate();
 
@@ -62,6 +72,7 @@ public class CommentsHandler extends HttpServlet {
             commentService.publish(comment, fileId);
         } catch (DatabaseNotLoadedException | IOException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
         }
     }
 

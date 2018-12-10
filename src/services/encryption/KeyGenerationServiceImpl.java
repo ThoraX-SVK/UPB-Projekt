@@ -4,8 +4,6 @@ import domain.crypto.asymmetric.KeyGeneration;
 import services.encryption.interfaces.KeyGenerationService;
 
 import java.security.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class KeyGenerationServiceImpl implements KeyGenerationService {
 

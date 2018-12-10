@@ -2,6 +2,7 @@ package handlers.auth;
 
 import com.fei.upb.PasswordStrength;
 import com.fei.upb.PasswordStrengthImpl;
+import config.SystemFilePaths;
 import config.UrlPaths;
 import database.exceptions.DatabaseNotLoadedException;
 import database.exceptions.UserAlreadyExistsException;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +27,7 @@ public class RegistrationHandler extends HttpServlet {
 
     private String report;
 
+    private static final Logger logger = Logger.getLogger(RegistrationHandler.class.getName());
     private IRegistrationService registrationService = new RegistrationService();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,6 +36,7 @@ public class RegistrationHandler extends HttpServlet {
         String passwordConfirm = request.getParameter("password_confirm");
         String message = null;
 
+        logger.info("Registration attempt with username " + username);
         registrationService.isUsernameAvailable(username);
 
         if (!passwordsMatch(password, passwordConfirm)) {
@@ -53,12 +58,15 @@ public class RegistrationHandler extends HttpServlet {
                 return;
 
             } catch (UserAlreadyExistsException e) {
+                logger.warning("Registration failed with username " + username + ". " + e.getMessage());
                 message = "User with username " + username + " already exists!";
             } catch (DatabaseNotLoadedException e) {
+                logger.warning("Registration failed with username " + username + ". " + e.getMessage());
                 message = "There has been a problem with your registration. Please try again.";
             }
         }
 
+        logger.info("Registration attempt evaluated with message: " + message);
         request.setAttribute("message", message);
         request.setAttribute("username", username);
         request.getRequestDispatcher(TEMPLATE).forward(request, response);
@@ -81,10 +89,19 @@ public class RegistrationHandler extends HttpServlet {
     private boolean checkPasswordSecure(String password) {
         PasswordStrength passwordStrength = new PasswordStrengthImpl(password);
 
-        if (!passwordStrength.isSecure()) {
+        if (!passwordStrengthIsSecure(passwordStrength)) {
             this.report = passwordStrength.finalReport().replace(System.lineSeparator(),"<br/>");
             return false;
         } else {
+            return true;
+        }
+    }
+
+    private boolean passwordStrengthIsSecure(PasswordStrength passwordStrength) {
+        try {
+            return passwordStrength.isSecure();
+        } catch (NullPointerException e) {
+            logger.log(Level.SEVERE, "ERROR: " + e.getMessage() + ". Password dicts probably not found in /var/www/upb3_Bezak_Krason_Sestrienka/dicts");
             return true;
         }
     }

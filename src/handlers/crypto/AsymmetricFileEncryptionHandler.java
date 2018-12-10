@@ -3,6 +3,7 @@ package handlers.crypto;
 import config.UrlPaths;
 import domain.crypto.asymmetric.AsymmetricEncryptionData;
 import domain.crypto.symmetric.EncryptionData;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.FileUtils;
 import domain.utils.MultiPartUtils;
 import domain.utils.UrlUtils;
@@ -23,6 +24,8 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static config.SystemFilePaths.UPLOAD_DIRECTORY;
 import static config.SystemFilePaths.ZIP_DIRECTORY;
@@ -32,6 +35,9 @@ public class AsymmetricFileEncryptionHandler extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/AsymEnc.jsp";
+
+    private static final Logger logger = Logger.getLogger(AsymmetricFileDecryptionHandler.class.getName());
+
 
     private AsymmetricEncryptionService asymmetricEncryptionService = new AsymmetricEncryptionServiceImpl();
     private IEncryptionService encryptionService = new EncryptionService();
@@ -54,6 +60,7 @@ public class AsymmetricFileEncryptionHandler extends HttpServlet {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
                 request.setAttribute("message", dateTime.toString() + ": An error has occurred while processing your file!");
                 request.getRequestDispatcher(TEMPLATE).forward(request, response);
             }

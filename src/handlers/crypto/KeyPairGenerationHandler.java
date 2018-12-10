@@ -1,6 +1,7 @@
 package handlers.crypto;
 
 import config.UrlPaths;
+import domain.utils.ExceptionStringUtils;
 import domain.utils.FileUtils;
 import domain.utils.UrlUtils;
 import services.auth.CookieAuthorization;
@@ -19,6 +20,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static config.SystemFilePaths.ZIP_DIRECTORY;
 
@@ -27,7 +30,9 @@ public class KeyPairGenerationHandler extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String TEMPLATE = "templates/AsymKeyPair.jsp";
 
-    KeyGenerationService keyGenerationService = new KeyGenerationServiceImpl();
+    private static final Logger logger = Logger.getLogger(KeyPairGenerationHandler.class.getName());
+
+    private KeyGenerationService keyGenerationService = new KeyGenerationServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -42,6 +47,7 @@ public class KeyPairGenerationHandler extends HttpServlet {
 
         } catch (NoSuchProviderException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+            logger.log(Level.SEVERE, ExceptionStringUtils.stackTraceAsString(e));
             request.setAttribute("message", "There has been a problem.");
             request.getRequestDispatcher(TEMPLATE).forward(request, response);
         }
